@@ -3,9 +3,8 @@
 import { FareDetail, Timeslot } from "@/app/types/types";
 import Grid from "@mui/material/Grid2";
 import {
-  Box,
-  Checkbox,
   Paper,
+  Radio,
   Table,
   TableBody,
   TableCell,
@@ -19,39 +18,25 @@ import { useState } from "react";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
 
 function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [numSelected, setNumSelected] = useState<number>(0);
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = new Set(
-        fareDetails.map((fareDetail) => fareDetail.name)
-      );
-      setSelected(newSelected);
-      setNumSelected(newSelected.size);
-    } else {
-      setSelected(new Set());
-      setNumSelected(0);
-    }
-  };
+  const [fareDetailModes, setFareDetailModes] = useState<
+    Record<number, string>
+  >({});
+  const [selectedFareDetail, setSelectedFareDetail] =
+    useState<FareDetail | null>(null);
 
   const handleClick = (
     _: React.ChangeEvent<HTMLInputElement>,
-    name: string
+    fareDetail: FareDetail
   ) => {
-    const newSelected = new Set(selected);
-    if (newSelected.has(name)) {
-      newSelected.delete(name);
-    } else {
-      newSelected.add(name);
-    }
-    setSelected(newSelected);
-    setNumSelected(newSelected.size);
+    setSelectedFareDetail(fareDetail);
   };
 
   return (
     <Paper>
-      <EnhancedTableToolbar numSelected={numSelected} />
+      <EnhancedTableToolbar
+        selectedFareDetail={selectedFareDetail}
+        setFareDetailModes={setFareDetailModes}
+      />
       <TableContainer>
         <Table
           sx={{ minWidth: { xs: "100%", sm: 650 } }}
@@ -65,16 +50,7 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
                 backgroundColor: "#000",
               }}
             >
-              <TableCell padding="checkbox">
-                <Checkbox
-                  color="primary"
-                  indeterminate={
-                    numSelected > 0 && numSelected < fareDetails.length
-                  }
-                  checked={numSelected === fareDetails.length}
-                  onChange={handleSelectAllClick}
-                />
-              </TableCell>
+              <TableCell padding="checkbox" />
               <TableCell sx={{ color: "#fff" }}>Type</TableCell>
               <TableCell sx={{ color: "#fff" }} align="right">
                 Fare
@@ -87,17 +63,17 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
           <TableBody>
             {fareDetails.map((fareDetail: FareDetail) => (
               <TableRow
-                key={fareDetail.name}
+                key={fareDetail.id}
                 sx={{
                   "&:last-child td, &:last-child th": { border: 0 },
                 }}
               >
                 <TableCell padding="checkbox">
-                  <Checkbox
+                  <Radio
                     color="primary"
-                    checked={selected.has(fareDetail.name)}
+                    checked={selectedFareDetail === fareDetail}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      handleClick(event, fareDetail.name)
+                      handleClick(event, fareDetail)
                     }
                   />
                 </TableCell>

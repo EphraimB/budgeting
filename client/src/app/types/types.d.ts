@@ -203,7 +203,7 @@ export interface CommuteStation {
   dateModified: string;
 }
 
-interface Timeslot {
+export interface Timeslot {
   dayOfWeek: number;
   startTime: string;
   endTime: string;

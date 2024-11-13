@@ -1,14 +1,34 @@
 import { Toolbar, IconButton, Typography } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { alpha } from "@mui/material/styles";
+import { FareDetail } from "@/app/types/types";
 
-const EnhancedTableToolbar = ({ numSelected }: { numSelected: number }) => {
+const EnhancedTableToolbar = ({
+  selectedFareDetail,
+  setFareDetailModes,
+}: {
+  selectedFareDetail: FareDetail | null;
+  setFareDetailModes: React.Dispatch<
+    React.SetStateAction<Record<number, string>>
+  >;
+}) => {
+  const handleEdit = () => {};
+
+  const handleDelete = () => {
+    if (selectedFareDetail) {
+      setFareDetailModes((prevModes: any) => ({
+        ...prevModes,
+        [selectedFareDetail.id]: "delete",
+      }));
+    }
+  };
+
   return (
     <Toolbar
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
+        ...(selectedFareDetail !== null && {
           bgcolor: (theme) =>
             alpha(
               theme.palette.primary.main,
@@ -17,14 +37,14 @@ const EnhancedTableToolbar = ({ numSelected }: { numSelected: number }) => {
         }),
       }}
     >
-      {numSelected > 0 ? (
+      {selectedFareDetail !== null ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
           color="inherit"
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          1 selected
         </Typography>
       ) : (
         <Typography
@@ -36,12 +56,12 @@ const EnhancedTableToolbar = ({ numSelected }: { numSelected: number }) => {
           Fares
         </Typography>
       )}
-      {numSelected > 0 && (
+      {selectedFareDetail !== null && (
         <>
           <IconButton>
             <Edit />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleDelete}>
             <Delete />
           </IconButton>
         </>
