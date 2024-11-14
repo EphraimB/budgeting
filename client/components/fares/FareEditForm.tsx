@@ -1,5 +1,6 @@
-import { FareDetail, Timeslot } from "@/app/types/types";
+import { FareDetail } from "@/app/types/types";
 import {
+  Button,
   InputAdornment,
   MenuItem,
   Paper,
@@ -7,7 +8,6 @@ import {
   SelectChangeEvent,
   TableCell,
   TextField,
-  Typography,
 } from "@mui/material";
 import { editFareDetail } from "../../services/actions/fareDetail";
 import Grid from "@mui/material/Grid2";
@@ -190,6 +190,11 @@ const FareEditForm = ({
             </Grid>
           ))}
         </Grid>
+      </TableCell>
+      <TableCell>
+        <Button variant="contained" onClick={handleEdit}>
+          Submit
+        </Button>
       </TableCell>
     </>
   );

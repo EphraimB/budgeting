@@ -50,6 +50,7 @@ const FareDeleteForm = ({
           fare?
         </Typography>
       </TableCell>
+      <TableCell></TableCell>
       <TableCell align="right">
         <Button variant="contained" color="secondary" onClick={handleCancel}>
           No

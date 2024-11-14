@@ -58,6 +58,7 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
               <TableCell sx={{ color: "#fff" }} align="center">
                 Times valid
               </TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
