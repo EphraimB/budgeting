@@ -148,6 +148,7 @@ const FareEditForm = ({
                   })}
                 </Select>
                 <br />
+                <br />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimeField
                     label="Start Time"
@@ -166,9 +167,12 @@ const FareEditForm = ({
                       );
                     }}
                   />
+                  <br />
                   <TimeField
                     label="End Time"
-                    value={dayjs(timeslot.endTime, "HH:mm")}
+                    value={dayjs()
+                      .hour(parseInt(timeslot.endTime.split(":")[0]))
+                      .minute(parseInt(timeslot.endTime.split(":")[1]))}
                     onChange={(newEndTime) => {
                       const endTimeString = newEndTime?.format("HH:mm") ?? ""; // Handle null
                       setTimeslots((prevTimeslots) =>
