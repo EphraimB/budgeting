@@ -15,7 +15,14 @@ const EnhancedTableToolbar = ({
     React.SetStateAction<Record<number, string>>
   >;
 }) => {
-  const handleEdit = () => {};
+  const handleEdit = () => {
+    if (selectedId) {
+      setFareDetailModes((prevModes: any) => ({
+        ...prevModes,
+        [selectedId]: "edit",
+      }));
+    }
+  };
 
   const handleDelete = () => {
     if (selectedId) {
@@ -29,10 +36,7 @@ const EnhancedTableToolbar = ({
   const handleClose = () => {
     if (selectedId) {
       setSelectedId(null);
-      setFareDetailModes((prevModes: any) => ({
-        ...prevModes,
-        [selectedId]: "view",
-      }));
+      setFareDetailModes({});
     }
   };
 
@@ -77,7 +81,7 @@ const EnhancedTableToolbar = ({
           </IconButton>
         ) : (
           <>
-            <IconButton>
+            <IconButton onClick={handleEdit}>
               <Edit />
             </IconButton>
             <IconButton onClick={handleDelete}>

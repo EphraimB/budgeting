@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
 import FareDeleteForm from "./FareDeleteForm";
+import FareEditForm from "./FareEditForm";
 
 function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
   const [fareDetailModes, setFareDetailModes] = useState<
@@ -84,6 +85,11 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
                 </TableCell>
                 {fareDetailModes[fareDetail.id] === "delete" ? (
                   <FareDeleteForm
+                    fareDetail={fareDetail}
+                    setFareDetailModes={setFareDetailModes}
+                  />
+                ) : fareDetailModes[fareDetail.id] === "edit" ? (
+                  <FareEditForm
                     fareDetail={fareDetail}
                     setFareDetailModes={setFareDetailModes}
                   />
