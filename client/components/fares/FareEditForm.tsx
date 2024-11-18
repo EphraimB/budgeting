@@ -66,6 +66,15 @@ const FareEditForm = ({
     return true;
   };
 
+  const data = {
+    commuteSystemId: fareDetail.commuteSystemId,
+    stationId: fareDetail.stationId,
+    name: fareType,
+    fare,
+    timeslots,
+    alternateFareDetailId: fareDetail.alternateFareDetailId,
+  };
+
   const handleEdit = async () => {
     const isFareTypeValid = validateFareType();
     const isFareValid = validateFare();
@@ -73,7 +82,7 @@ const FareEditForm = ({
     if (isFareTypeValid && isFareValid) {
       // Submit data
       try {
-        await editFareDetail(fareDetail, fareDetail.id);
+        await editFareDetail(data, fareDetail.id);
 
         // Show success message
         showSnackbar(`Fare detail "${fareDetail.name}" edited successfully`);

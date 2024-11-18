@@ -58,7 +58,9 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
               <TableCell sx={{ color: "#fff" }} align="center">
                 Times valid
               </TableCell>
-              <TableCell></TableCell>
+              <TableCell sx={{ color: "#fff" }} align="right">
+                Alternate fare
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -138,6 +140,9 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
                           )
                         )}
                       </Grid>
+                    </TableCell>
+                    <TableCell align="right">
+                      {fareDetail.alternateFareDetailId}
                     </TableCell>
                   </>
                 )}

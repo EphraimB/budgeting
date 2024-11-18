@@ -6,13 +6,10 @@ import { revalidatePath } from "next/cache";
 export interface FareDetailRequest {
   commuteSystemId: number;
   stationId: number;
-  commuteSystemName: string;
   name: string;
   fare: number;
   timeslots: Timeslot[];
   alternateFareDetailId: number | null;
-  dateCreated: string;
-  dateModified: string;
 }
 
 export async function addFareDetail(fareDetail: FareDetailRequest) {
