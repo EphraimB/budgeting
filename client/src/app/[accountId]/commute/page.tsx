@@ -1,4 +1,4 @@
-import CommuteSystemOrbit from "../../../../components/commute/CommuteSystemOrbit";
+import CommutePanels from "../../../../components/commute/CommutePanels";
 import { CommuteSystem } from "@/app/types/types";
 
 async function getCommuteSystems() {
@@ -18,7 +18,7 @@ async function getCommuteSystems() {
 async function Commute() {
   const commuteSystems: CommuteSystem[] = await getCommuteSystems();
 
-  return <CommuteSystemOrbit commuteSystems={commuteSystems} />;
+  return <CommutePanels commuteSystems={commuteSystems} />;
 }
 
 export default Commute;
