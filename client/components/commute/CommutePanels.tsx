@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Divider, Box } from "@mui/material";
+import { Stack, Divider, Box, useMediaQuery } from "@mui/material";
 import { CommuteSystem } from "@/app/types/types";
 import CommuteSystemCards from "../commuteSystem/CommuteSystemCards";
 
@@ -9,10 +9,14 @@ export default function CommutePanels({
 }: {
   commuteSystems: CommuteSystem[];
 }) {
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   return (
     <Stack
-      direction="row"
-      divider={<Divider orientation="vertical" flexItem />}
+      direction={isMobile ? "column" : "row"} // Stack vertically on mobile
+      divider={
+        <Divider orientation={isMobile ? "horizontal" : "vertical"} flexItem />
+      }
       spacing={0} // No spacing between panels
       sx={{
         height: "100vh", // Full viewport height
@@ -35,8 +39,8 @@ export default function CommutePanels({
         sx={{
           flex: 1,
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center", // Align center vertically in mobile
         }}
       >
         <Box>
@@ -50,8 +54,8 @@ export default function CommutePanels({
         sx={{
           flex: 1,
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center", // Align center vertically in mobile
         }}
       >
         <Box>
