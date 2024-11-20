@@ -2,7 +2,7 @@
 
 import { Stack, Divider, Box } from "@mui/material";
 import { CommuteSystem } from "@/app/types/types";
-import CommuteSystemOrbit from "./CommuteSystemOrbit";
+import CommuteSystemCards from "../commuteSystem/CommuteSystemCards";
 
 export default function CommutePanels({
   commuteSystems,
@@ -24,13 +24,10 @@ export default function CommutePanels({
         sx={{
           flex: 1,
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
-          position: "relative", // Needed for child absolute positioning
-          overflow: "hidden", // Prevents children from overflowing
         }}
       >
-        <CommuteSystemOrbit commuteSystems={commuteSystems} />
+        <CommuteSystemCards commuteSystems={commuteSystems} />
       </Box>
 
       {/* Panel 2 */}

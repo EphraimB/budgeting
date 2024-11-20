@@ -9,13 +9,12 @@ import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
 import CommuteSystemActionsMenu from "./CommuteSystemActionsMenu";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function CommuteSystemView({
-  accountId,
   commuteSystem,
   setCommuteSystemModes,
 }: {
-  accountId: number;
   commuteSystem: CommuteSystem;
   setCommuteSystemModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
@@ -23,6 +22,8 @@ function CommuteSystemView({
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const pathname = usePathname();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -58,8 +59,9 @@ function CommuteSystemView({
       />
       <CardHeader title={commuteSystem.name} />
       <Link
-        href={`/${accountId}/commute/setup/${commuteSystem.id}`}
-        as={`/${accountId}/commute/setup/${commuteSystem.id}`}
+        href={{
+          query: { commuteSystemId: commuteSystem.id },
+        }}
         style={{ textDecoration: "none", color: "inherit" }}
       >
         <CardContent>
