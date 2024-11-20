@@ -35,7 +35,6 @@ function NewCommuteSystemForm({
   const [fareCapDuration, setFareCapDuration] = useState<string | null>(null);
 
   const [nameError, setNameError] = useState("");
-  const [fareCapError, setFareCapError] = useState("");
 
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
@@ -56,21 +55,10 @@ function NewCommuteSystemForm({
     return true;
   };
 
-  const validateFareCap = () => {
-    if (!fareCap) {
-      setFareCapError("Fare cap is required");
-
-      return false;
-    }
-
-    return true;
-  };
-
   const handleSubmit = async () => {
     const isNameValid = validateName();
-    const isFareCapValid = validateFareCap();
 
-    if (isNameValid && isFareCapValid) {
+    if (isNameValid) {
       // Submit data
       try {
         await addCommuteSystem(data);
@@ -126,7 +114,6 @@ function NewCommuteSystemForm({
     <Card
       sx={{
         position: "relative",
-        maxWidth: "18rem",
       }}
     >
       <IconButton
@@ -180,8 +167,6 @@ function NewCommuteSystemForm({
                   label="Fare cap"
                   variant="standard"
                   value={fareCap}
-                  error={!!fareCapError}
-                  helperText={fareCapError}
                   onChange={(e) => setFareCap(parseInt(e.target.value))}
                   slotProps={{
                     input: {

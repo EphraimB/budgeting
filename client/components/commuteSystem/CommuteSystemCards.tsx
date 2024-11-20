@@ -37,7 +37,7 @@ function CommuteSystemCards({
       </Stack>
       <Grid container spacing={2}>
         {showCommuteSystemForm && (
-          <Grid key="new-commute-system">
+          <Grid key="new-commute-system" size={{ sm: 6 }}>
             <NewCommuteSystemForm
               setShowCommuteSystemForm={setShowCommuteSystemForm}
             />
