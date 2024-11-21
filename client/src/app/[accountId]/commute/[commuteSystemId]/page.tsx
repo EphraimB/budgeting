@@ -51,9 +51,10 @@ async function CommuteSystemDetails({
 
   return (
     <Stack direction="column">
-      <Typography>Details for {commuteSystem.name}</Typography>
-      <br />
-      <CommuteStationCards commuteStations={commuteStations} />
+      <CommuteStationCards
+        commuteSystemName={commuteSystem.name}
+        commuteStations={commuteStations}
+      />
     </Stack>
   );
 }

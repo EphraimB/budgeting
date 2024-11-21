@@ -120,7 +120,6 @@ function NewCommuteStationForm({
     <Card
       sx={{
         position: "relative",
-        maxWidth: "18rem",
       }}
     >
       <IconButton
