@@ -8,7 +8,7 @@ export default function CommutePanels({
 }: {
   children: React.ReactNode;
 }) {
-  const isMobile = useMediaQuery("(min-width:600px)");
+  const isMobile = useMediaQuery("(max-width:600px)", { noSsr: true });
 
   return (
     <Stack
