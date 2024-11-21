@@ -1,5 +1,22 @@
-import { CommuteStation } from "@/app/types/types";
+import { CommuteStation, CommuteSystem } from "@/app/types/types";
 import CommuteStationCards from "../../../../../components/commuteStation/CommuteStationsCards";
+import { Typography } from "@mui/material";
+
+async function getCommuteSystemsById(id: number) {
+  try {
+    const res = await fetch(
+      `http://server:5001/api/expenses/commute/systems/${id}`
+    );
+
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
+    throw new Error("Failed to fetch commute system");
+  }
+}
 
 async function getCommuteStations(commuteSystemId: number) {
   try {
@@ -24,11 +41,21 @@ async function CommuteSystemDetails({
 }) {
   const commuteSystemId = parseInt(params.commuteSystemId);
 
-  const commuteSystems: CommuteStation[] = await getCommuteStations(
+  const commuteSystem: CommuteSystem = await getCommuteSystemsById(
     commuteSystemId
   );
 
-  return <CommuteStationCards commuteStations={commuteSystems} />;
+  const commuteStations: CommuteStation[] = await getCommuteStations(
+    commuteSystemId
+  );
+
+  return (
+    <>
+      <Typography>Details for {commuteSystem.name}</Typography>
+      <br />
+      <CommuteStationCards commuteStations={commuteStations} />
+    </>
+  );
 }
 
 export default CommuteSystemDetails;

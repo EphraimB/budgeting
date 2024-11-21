@@ -39,7 +39,6 @@ export default function CommutePanels({
           flex: 1,
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
         }}
       >
         {/* Original panel 2 content */}
@@ -51,7 +50,6 @@ export default function CommutePanels({
           flex: 1,
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
         }}
       >
         {/* Original panel 3 content */}
