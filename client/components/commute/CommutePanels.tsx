@@ -1,26 +1,25 @@
 "use client";
 
-import { Stack, Divider, Box, useMediaQuery } from "@mui/material";
-import { CommuteSystem } from "@/app/types/types";
-import CommuteSystemCards from "../commuteSystem/CommuteSystemCards";
+import { Stack, Box, Divider } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function CommutePanels({
-  commuteSystems,
+  children,
 }: {
-  commuteSystems: CommuteSystem[];
+  children: React.ReactNode;
 }) {
-  const isMobile = useMediaQuery("(max-width:600px)");
+  const isMobile = useMediaQuery("(min-width:600px)");
 
   return (
     <Stack
-      direction={isMobile ? "column" : "row"} // Stack vertically on mobile
+      direction={{ xs: "column", lg: "row" }}
       divider={
         <Divider orientation={isMobile ? "horizontal" : "vertical"} flexItem />
       }
-      spacing={0} // No spacing between panels
+      spacing={0}
       sx={{
-        height: "100vh", // Full viewport height
-        width: "100%", // Full width of the parent container
+        height: "100vh",
+        width: "100%",
       }}
     >
       {/* Panel 1 */}
@@ -31,7 +30,7 @@ export default function CommutePanels({
           justifyContent: "center",
         }}
       >
-        <CommuteSystemCards commuteSystems={commuteSystems} />
+        {children}
       </Box>
 
       {/* Panel 2 */}
@@ -40,13 +39,10 @@ export default function CommutePanels({
           flex: 1,
           display: "flex",
           justifyContent: "center",
-          alignItems: "center", // Align center vertically in mobile
+          alignItems: "center",
         }}
       >
-        <Box>
-          {/* Placeholder for commute schedule content */}
-          Commute schedule Goes Here
-        </Box>
+        {/* Original panel 2 content */}
       </Box>
 
       {/* Panel 3 */}
@@ -55,13 +51,10 @@ export default function CommutePanels({
           flex: 1,
           display: "flex",
           justifyContent: "center",
-          alignItems: "center", // Align center vertically in mobile
+          alignItems: "center",
         }}
       >
-        <Box>
-          {/* Placeholder for commute history content */}
-          Commute history Content Goes Here
-        </Box>
+        {/* Original panel 3 content */}
       </Box>
     </Stack>
   );

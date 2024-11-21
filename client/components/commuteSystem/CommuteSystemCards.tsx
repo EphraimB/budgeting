@@ -44,7 +44,8 @@ function CommuteSystemCards({
           </Grid>
         )}
 
-        {commuteSystems.map((commuteSystem: CommuteSystem) => (
+        {/* Main grid with 2x2 layout */}
+        {commuteSystems.map((commuteSystem) => (
           <Grid key={commuteSystem.id} size={{ sm: 6 }}>
             <Card sx={{ position: "relative" }}>
               {commuteSystemModes[commuteSystem.id] === "delete" ? (

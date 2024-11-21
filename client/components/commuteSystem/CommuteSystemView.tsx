@@ -59,9 +59,7 @@ function CommuteSystemView({
       />
       <CardHeader title={commuteSystem.name} />
       <Link
-        href={{
-          query: { commuteSystemId: commuteSystem.id },
-        }}
+        href={`${pathname}/${commuteSystem.id}`}
         style={{ textDecoration: "none", color: "inherit" }}
       >
         <CardContent>
