@@ -1,10 +1,11 @@
 import { CommuteStation, CommuteSystem, FareDetail } from "@/app/types/types";
 import { Stack } from "@mui/material";
+import FareDetailsCards from "../../../../../../components/fareDetails/FareDetailsCards";
 
-async function getCommuteSystemsById(id: number) {
+async function getCommuteSystemsById(commuteSystemId: number) {
   try {
     const res = await fetch(
-      `http://server:5001/api/expenses/commute/systems/${id}`
+      `http://server:5001/api/expenses/commute/systems/${commuteSystemId}`
     );
 
     if (!res.ok) {
@@ -17,10 +18,10 @@ async function getCommuteSystemsById(id: number) {
   }
 }
 
-async function getCommuteStations(commuteSystemId: number) {
+async function getCommuteStations(commuteStationId: number) {
   try {
     const res = await fetch(
-      `http://server:5001/api/expenses/commute/stations?commuteSystemId=${commuteSystemId}`
+      `http://server:5001/api/expenses/commute/stations/${commuteStationId}`
     );
 
     if (!res.ok) {
@@ -61,13 +62,21 @@ async function CommuteStationDetails({
     commuteSystemId
   );
 
-  const commuteStations: CommuteStation[] = await getCommuteStations(
-    commuteSystemId
+  const commuteStations: CommuteStation = await getCommuteStations(
+    commuteStationId
   );
 
   const fareDetails: FareDetail[] = await getFareDetails(commuteStationId);
 
-  return <Stack direction="column"></Stack>;
+  return (
+    <Stack direction="column">
+      <FareDetailsCards
+        commuteSystemName={commuteSystem.name}
+        stationName={commuteStations.fromStation}
+        fareDetails={fareDetails}
+      />
+    </Stack>
+  );
 }
 
 export default CommuteStationDetails;

@@ -11,9 +11,11 @@ import { ArrowBack } from "@mui/icons-material";
 import { usePathname } from "next/navigation";
 
 function FareDetailsCards({
+  commuteSystemName,
   stationName,
   fareDetails,
 }: {
+  commuteSystemName: string;
   stationName: string;
   fareDetails: FareDetail[];
 }) {
@@ -45,7 +47,7 @@ function FareDetailsCards({
             textAlign: "center",
           }}
         >
-          {stationName}
+          {commuteSystemName}-{stationName}
         </Typography>
         <IconButton onClick={() => setShowFareDetailForm(true)}>
           <AddIcon />
