@@ -41,7 +41,14 @@ function CommuteStationCards({
         <IconButton onClick={() => goBack()}>
           <ArrowBack />
         </IconButton>
-        <Typography component="h6" variant="h6">
+        <Typography
+          component="h6"
+          variant="h6"
+          sx={{
+            flexGrow: 1, // Allows this element to take up the remaining space
+            textAlign: "center",
+          }}
+        >
           {commuteSystemName}
         </Typography>
         <IconButton onClick={() => setShowCommuteStationForm(true)}>
