@@ -34,27 +34,14 @@ function FareDetailsCards({
     router.push(parentPath);
   };
 
-  function getColorForDay(dayOfWeek: number) {
-    const colors = [
-      "#f00",
-      "#ff7f00",
-      "#ffff00",
-      "#00ff00",
-      "#0000ff",
-      "#4b0082",
-      "#ee82ee",
-    ];
-    return colors[dayOfWeek];
-  }
-
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+  const colors = [
+    { light: "#FFCCCB", dark: "#FF6347" }, // Sunday (Tomato) - Light & Dark
+    { light: "#FF7F50", dark: "#FF4500" }, // Monday (OrangeRed) - Light & Dark
+    { light: "#FFFACD", dark: "#FFD700" }, // Tuesday (Gold) - Light & Dark
+    { light: "#98FB98", dark: "#32CD32" }, // Wednesday (LimeGreen) - Light & Dark
+    { light: "#ADD8E6", dark: "#1E90FF" }, // Thursday (DodgerBlue) - Light & Dark
+    { light: "#D8BFD8", dark: "#8A2BE2" }, // Friday (BlueViolet) - Light & Dark
+    { light: "#FFB6C1", dark: "#FF1493" }, // Saturday (DeepPink) - Light & Dark
   ];
 
   return (
@@ -102,31 +89,15 @@ function FareDetailsCards({
                 alignItems: "center",
               }}
             >
-              {/* Render the 7 rings for each day of the week */}
+              {/* Render 7 rings for each day of the week */}
               {Array.from({ length: 7 }).map((_, dayIndex) => (
                 <AnalogClock
                   key={dayIndex}
                   timeslots={fareDetail.timeslots}
                   dayOfWeek={dayIndex}
-                  color={getColorForDay(dayIndex)}
-                  size={`calc(100% - ${dayIndex * 10}px)`} // Rings get smaller as we go out
-                  tooltipLabel={
-                    fareDetail.timeslots
-                      .filter((slot) => slot.dayOfWeek === dayIndex)
-                      .map((slot) => `${slot.startTime} - ${slot.endTime}`)
-                      .join(", ") ||
-                    `No timeslots for ${
-                      [
-                        "Sunday",
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday",
-                        "Saturday",
-                      ][dayIndex]
-                    }`
-                  }
+                  lightColor={colors[dayIndex].light}
+                  darkColor={colors[dayIndex].dark}
+                  size={`calc(100% - ${dayIndex * 30}px)`} // Smaller rings as dayIndex increases
                 />
               ))}
               {fareDetailModes[fareDetail.id] === "delete" ? (

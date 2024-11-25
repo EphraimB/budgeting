@@ -27,16 +27,6 @@ function FareDetailView({
     setAnchorEl(null);
   };
 
-  const dayColors = [
-    "#ee82ee", // Sunday
-    "#f00", // Monday
-    "#ff7f00", // Tuesday
-    "#ffff00", // Wednesday
-    "#00ff00", // Thursday
-    "#0000ff", // Friday
-    "#4b0082", // Saturday
-  ];
-
   return (
     <>
       <IconButton

@@ -1,65 +1,88 @@
-import React from "react";
-import { Box } from "@mui/material";
 import { Timeslot } from "@/app/types/types";
-
-// Helper to calculate the percentage of time in the day
-function calculateTimePercentage(time: string): number {
-  const [hours, minutes] = time.split(":").map(Number);
-  const totalMinutes = hours * 60 + minutes;
-  return (totalMinutes / 1440) * 100; // Percentage of 24 hours
-}
-
-// Generate the conic-gradient for each timeslot
-function getRingGradient(
-  timeslots: Timeslot[],
-  dayOfWeek: number,
-  color: string
-) {
-  const dayTimeslots = timeslots.filter((slot) => slot.dayOfWeek === dayOfWeek);
-
-  if (dayTimeslots.length === 0) return "transparent";
-
-  const segments = dayTimeslots.map((slot) => {
-    const startPercent = calculateTimePercentage(slot.startTime);
-    const endPercent = calculateTimePercentage(slot.endTime);
-    return `${color} ${startPercent}% ${endPercent}%`;
-  });
-
-  return `conic-gradient(${segments.join(", ")})`;
-}
+import { Box, Tooltip } from "@mui/material";
 
 function AnalogClock({
   timeslots,
   dayOfWeek,
-  color,
+  lightColor,
+  darkColor,
   size,
-  tooltipLabel,
 }: {
   timeslots: Timeslot[];
   dayOfWeek: number;
-  color: string;
+  lightColor: string;
+  darkColor: string;
   size: string;
-  tooltipLabel: string;
 }) {
-  const gradient = getRingGradient(timeslots, dayOfWeek, color);
+  // Get the timeslots for the current day
+  const dayTimeslots = timeslots.filter((slot) => slot.dayOfWeek === dayOfWeek);
+
+  // Helper function to calculate the angles for the timeslots
+  function getSlotDegrees(timeslots: { startTime: string; endTime: string }[]) {
+    let totalDegrees = 0;
+    timeslots.forEach((slot) => {
+      const start = convertTimeToDegrees(slot.startTime);
+      const end = convertTimeToDegrees(slot.endTime);
+      totalDegrees += end - start;
+    });
+    return totalDegrees;
+  }
+
+  // Helper function to convert time to degrees (24-hour clock)
+  function convertTimeToDegrees(time: string) {
+    const [hours, minutes] = time.split(":").map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    return (totalMinutes / 1440) * 360; // 1440 minutes in 24 hours
+  }
 
   return (
     <Box
-      sx={{
+      style={{
         position: "absolute",
         top: "50%",
         left: "50%",
         width: size,
         height: size,
         borderRadius: "50%",
-        border: `2px solid ${color}`,
-        background: gradient,
+        border: `2px solid ${lightColor}`, // Outer ring color
         transform: "translate(-50%, -50%)",
-        zIndex: dayOfWeek, // To stack them properly
-        cursor: "pointer",
       }}
-      title={tooltipLabel}
-    />
+    >
+      {/* Create a darker ring for the timeslots */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          borderRadius: "50%",
+          background: `conic-gradient(${darkColor} ${getSlotDegrees(
+            dayTimeslots
+          )}deg, ${lightColor} 0deg)`,
+        }}
+      >
+        {dayTimeslots.map((slot, index) => (
+          <Tooltip
+            key={index}
+            title={`${slot.startTime} - ${slot.endTime}`}
+            arrow
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "100%",
+                height: "100%",
+                borderRadius: "50%",
+              }}
+            />
+          </Tooltip>
+        ))}
+      </Box>
+    </Box>
   );
 }
 
