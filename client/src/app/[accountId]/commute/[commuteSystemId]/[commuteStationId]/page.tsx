@@ -62,7 +62,7 @@ async function CommuteStationDetails({
     commuteSystemId
   );
 
-  const commuteStations: CommuteStation = await getCommuteStations(
+  const commuteStation: CommuteStation = await getCommuteStations(
     commuteStationId
   );
 
@@ -72,7 +72,7 @@ async function CommuteStationDetails({
     <Stack direction="column">
       <FareDetailsCards
         commuteSystemName={commuteSystem.name}
-        stationName={commuteStations.fromStation}
+        commuteStation={commuteStation}
         fareDetails={fareDetails}
       />
     </Stack>

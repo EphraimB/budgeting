@@ -1,0 +1,83 @@
+"use client";
+
+import { useState } from "react";
+import CardContent from "@mui/material/CardContent";
+import { FareDetail } from "@/app/types/types";
+import IconButton from "@mui/material/IconButton";
+import MoreVert from "@mui/icons-material/MoreVert";
+import { Box } from "@mui/material";
+
+function FareDetailView({
+  fareDetail,
+  setFareDetailModes,
+}: {
+  fareDetail: FareDetail;
+  setFareDetailModes: React.Dispatch<
+    React.SetStateAction<Record<number, string>>
+  >;
+}) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const dayColors = [
+    "#ee82ee", // Sunday
+    "#f00", // Monday
+    "#ff7f00", // Tuesday
+    "#ffff00", // Wednesday
+    "#00ff00", // Thursday
+    "#0000ff", // Friday
+    "#4b0082", // Saturday
+  ];
+
+  return (
+    <>
+      <IconButton
+        aria-label="more"
+        sx={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+        }}
+        size="small"
+        onClick={handleClick}
+        aria-controls={open ? "fare-detail-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+      >
+        <MoreVert />
+      </IconButton>
+      {/* <FareDetailActionsMenu
+        anchorEl={anchorEl}
+        open={open}
+        handleClose={handleClose}
+        setFareDetailModes={setFareDetailModes}
+        fareDetailId={fareDetail.id}
+      /> */}
+      {/* Fare details inside the card */}
+      <CardContent
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <Box>
+          <strong>{fareDetail.name}</strong>
+        </Box>
+        <Box>{fareDetail.fare}</Box>
+      </CardContent>
+    </>
+  );
+}
+
+export default FareDetailView;
