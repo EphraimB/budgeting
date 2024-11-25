@@ -61,16 +61,7 @@ function FareDetailView({
         setFareDetailModes={setFareDetailModes}
         fareDetailId={fareDetail.id}
       /> */}
-      {/* Fare details inside the card */}
-      <CardContent
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-        }}
-      >
+      <CardContent>
         <Box>
           <strong>{fareDetail.name}</strong>
         </Box>
