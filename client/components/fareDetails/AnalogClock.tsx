@@ -44,7 +44,7 @@ function AnalogClock({
         width: size,
         height: size,
         borderRadius: "50%",
-        border: `2px solid ${lightColor}`, // Outer ring color
+        border: `10px solid ${lightColor}`, // Outer ring color
         transform: "translate(-50%, -50%)",
       }}
     >
@@ -52,14 +52,16 @@ function AnalogClock({
       <Box
         sx={{
           position: "absolute",
-          top: 0,
-          left: 0,
+          top: `${dayOfWeek * 10}px`,
+          left: `${dayOfWeek * 10}px`,
           width: "100%",
           height: "100%",
           borderRadius: "50%",
           background: `conic-gradient(${darkColor} ${getSlotDegrees(
             dayTimeslots
           )}deg, ${lightColor} 0deg)`,
+          mask: "radial-gradient(circle, transparent 85%, black 100%)",
+          WebkitMask: "radial-gradient(circle, transparent 85%, black 100%)",
         }}
       >
         {dayTimeslots.map((slot, index) => (
