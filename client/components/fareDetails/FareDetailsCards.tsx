@@ -59,7 +59,10 @@ function FareDetailsCards({
           }}
         >
           {commuteSystemName}-
-          <Stack direction="column" sx={{ border: "1 px solid black" }}>
+          <Stack
+            direction="column"
+            sx={{ border: "1 px solid black", alignItems: "center" }}
+          >
             {commuteStation.fromStation}
             <ArrowDownward />
             {commuteStation.toStation}
