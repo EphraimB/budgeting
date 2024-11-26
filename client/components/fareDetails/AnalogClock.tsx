@@ -14,26 +14,15 @@ function AnalogClock({
   darkColor: string;
   size: string;
 }) {
-  // Get the timeslots for the current day
-  const dayTimeslots = timeslots.filter((slot) => slot.dayOfWeek === dayOfWeek);
-
-  // Helper function to calculate the angles for the timeslots
-  function getSlotDegrees(timeslots: { startTime: string; endTime: string }[]) {
-    let totalDegrees = 0;
-    timeslots.forEach((slot) => {
-      const start = convertTimeToDegrees(slot.startTime);
-      const end = convertTimeToDegrees(slot.endTime);
-      totalDegrees += end - start;
-    });
-    return totalDegrees;
-  }
-
   // Helper function to convert time to degrees (24-hour clock)
   function convertTimeToDegrees(time: string) {
     const [hours, minutes] = time.split(":").map(Number);
     const totalMinutes = hours * 60 + minutes;
     return (totalMinutes / 1440) * 360; // 1440 minutes in 24 hours
   }
+
+  // Get the timeslots for the current day
+  const dayTimeslots = timeslots.filter((slot) => slot.dayOfWeek === dayOfWeek);
 
   return (
     <Box
@@ -44,27 +33,14 @@ function AnalogClock({
         width: size,
         height: size,
         borderRadius: "50%",
-        border: `10px solid ${lightColor}`, // Outer ring color
         transform: "translate(-50%, -50%)",
+        border: `10px solid ${lightColor}`, // Outer ring color
       }}
     >
-      {/* Create a darker ring for the timeslots */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: `${dayOfWeek * 10}px`,
-          left: `${dayOfWeek * 10}px`,
-          width: "100%",
-          height: "100%",
-          borderRadius: "50%",
-          background: `conic-gradient(${darkColor} ${getSlotDegrees(
-            dayTimeslots
-          )}deg, ${lightColor} 0deg)`,
-          mask: "radial-gradient(circle, transparent 85%, black 100%)",
-          WebkitMask: "radial-gradient(circle, transparent 85%, black 100%)",
-        }}
-      >
-        {dayTimeslots.map((slot, index) => (
+      {dayTimeslots.map((slot, index) => {
+        const startAngle = convertTimeToDegrees(slot.startTime) - 90; // Adjust start angle
+        const endAngle = convertTimeToDegrees(slot.endTime) - 90; // Adjust end angle
+        return (
           <Tooltip
             key={index}
             title={`${slot.startTime} - ${slot.endTime}`}
@@ -79,11 +55,21 @@ function AnalogClock({
                 width: "100%",
                 height: "100%",
                 borderRadius: "50%",
+                border: "10px solid transparent",
+                borderStyle: "solid",
+                borderColor: `${darkColor}`,
+                clipPath: `polygon(50% 0%, ${
+                  Math.cos((startAngle * Math.PI) / 180) * 100 + 50
+                }% ${Math.sin((startAngle * Math.PI) / 180) * 100 + 50}%, ${
+                  Math.cos((endAngle * Math.PI) / 180) * 100 + 50
+                }% ${
+                  Math.sin((endAngle * Math.PI) / 180) * 100 + 50
+                }%, 50% 0%)`, // Adjust clipPath
               }}
             />
           </Tooltip>
-        ))}
-      </Box>
+        );
+      })}
     </Box>
   );
 }

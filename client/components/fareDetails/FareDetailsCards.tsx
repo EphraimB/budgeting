@@ -97,7 +97,7 @@ function FareDetailsCards({
                   dayOfWeek={dayIndex}
                   lightColor={colors[dayIndex].light}
                   darkColor={colors[dayIndex].dark}
-                  size={`calc(100% - ${dayIndex * 20}px)`} // Smaller rings as dayIndex increases
+                  size={`calc(100% - ${(dayIndex + 1) * 20}px)`} // Smaller rings as dayIndex increases
                 />
               ))}
               {fareDetailModes[fareDetail.id] === "delete" ? (
