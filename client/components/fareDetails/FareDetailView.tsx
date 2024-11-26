@@ -55,7 +55,7 @@ function FareDetailView({
         <Box>
           <strong>{fareDetail.name}</strong>
         </Box>
-        <Box>{fareDetail.fare}</Box>
+        <Box>${fareDetail.fare}</Box>
       </CardContent>
     </>
   );
