@@ -34,12 +34,24 @@ function AnalogClock({
         height: size,
         borderRadius: "50%",
         transform: "translate(-50%, -50%)",
-        border: `10px solid ${lightColor}`, // Outer ring color
       }}
     >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "100%",
+          height: "100%",
+          borderRadius: "50%",
+          border: `10px solid ${lightColor}`, // Outer ring color
+        }}
+      />
       {dayTimeslots.map((slot, index) => {
         const startAngle = convertTimeToDegrees(slot.startTime) - 90; // Adjust start angle
         const endAngle = convertTimeToDegrees(slot.endTime) - 90; // Adjust end angle
+
         return (
           <Tooltip
             key={index}
@@ -55,16 +67,16 @@ function AnalogClock({
                 width: "100%",
                 height: "100%",
                 borderRadius: "50%",
-                border: "10px solid transparent",
-                borderStyle: "solid",
-                borderColor: `${darkColor}`,
-                clipPath: `polygon(50% 0%, ${
-                  Math.cos((startAngle * Math.PI) / 180) * 100 + 50
-                }% ${Math.sin((startAngle * Math.PI) / 180) * 100 + 50}%, ${
-                  Math.cos((endAngle * Math.PI) / 180) * 100 + 50
-                }% ${
-                  Math.sin((endAngle * Math.PI) / 180) * 100 + 50
-                }%, 50% 0%)`, // Adjust clipPath
+                "::after": {
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  background: `conic-gradient(from ${startAngle}deg at 50% 50%, ${darkColor} ${startAngle}deg, transparent ${startAngle}deg ${endAngle}deg, ${darkColor} ${endAngle}deg)`,
+                },
               }}
             />
           </Tooltip>
