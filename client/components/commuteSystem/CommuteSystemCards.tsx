@@ -9,7 +9,7 @@ import CommuteSystemView from "./CommuteSystemView";
 import CommuteSystemDelete from "./CommuteSystemDelete";
 import NewCommuteSystemForm from "./NewCommuteSystemForm";
 import CommuteSystemEdit from "./CommuteSystemEdit";
-import { IconButton, Stack, Typography } from "@mui/material";
+import { Box, Fab, Stack } from "@mui/material";
 
 function CommuteSystemCards({
   commuteSystems,
@@ -23,21 +23,9 @@ function CommuteSystemCards({
 
   return (
     <Stack direction="column" spacing={2}>
-      <Stack direction="row" spacing={2} sx={{ backgroundColor: "gray" }}>
-        <Typography component="h4" variant="h6">
-          Tickets
-        </Typography>
-        <Typography component="p" variant="body2">
-          Setup systems, stations, fares, and times and drag and drop them onto
-          the schedule on the center panel
-        </Typography>
-        <IconButton onClick={() => setShowCommuteSystemForm(true)}>
-          <AddIcon />
-        </IconButton>
-      </Stack>
       <Grid container spacing={2}>
         {showCommuteSystemForm && (
-          <Grid key="new-commute-system" size={{ xs: 6 }}>
+          <Grid key="new-commute-system">
             <NewCommuteSystemForm
               setShowCommuteSystemForm={setShowCommuteSystemForm}
             />
@@ -46,8 +34,8 @@ function CommuteSystemCards({
 
         {/* Main grid with 2x2 layout */}
         {commuteSystems.map((commuteSystem) => (
-          <Grid key={commuteSystem.id} size={{ sm: 6 }}>
-            <Card sx={{ position: "relative" }}>
+          <Grid key={commuteSystem.id}>
+            <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {commuteSystemModes[commuteSystem.id] === "delete" ? (
                 <CommuteSystemDelete
                   commuteSystem={commuteSystem}
@@ -68,6 +56,12 @@ function CommuteSystemCards({
           </Grid>
         ))}
       </Grid>
+      <br />
+      <Box sx={{ position: "fixed", bottom: 16, right: 16 }}>
+        <Fab color="primary" onClick={() => setShowCommuteSystemForm(true)}>
+          <AddIcon />
+        </Fab>
+      </Box>
     </Stack>
   );
 }

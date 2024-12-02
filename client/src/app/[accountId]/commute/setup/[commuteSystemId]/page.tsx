@@ -1,5 +1,5 @@
 import { CommuteStation, CommuteSystem } from "@/app/types/types";
-import CommuteStationCards from "../../../../../components/commuteStation/CommuteStationsCards";
+import CommuteStationCards from "../../../../../../components/commuteStation/CommuteStationsCards";
 import { Stack } from "@mui/material";
 
 async function getCommuteSystemsById(id: number) {

@@ -1,6 +1,6 @@
 import { CommuteStation, CommuteSystem, FareDetail } from "@/app/types/types";
 import { Stack } from "@mui/material";
-import FareDetailsCards from "../../../../../../components/fareDetails/FareDetailsCards";
+import FareDetailsCards from "../../../../../../../components/fareDetails/FareDetailsCards";
 
 async function getCommuteSystemsById(commuteSystemId: number) {
   try {

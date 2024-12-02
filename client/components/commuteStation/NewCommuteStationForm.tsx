@@ -119,6 +119,7 @@ function NewCommuteStationForm({
   return (
     <Card
       sx={{
+        maxWidth: "18rem",
         position: "relative",
       }}
     >
