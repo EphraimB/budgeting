@@ -1,6 +1,6 @@
 import { CommuteStation, CommuteSystem } from "@/app/types/types";
 import CommuteStationCards from "../../../../../../components/commuteStation/CommuteStationsCards";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 
 async function getCommuteSystemsById(id: number) {
   try {
@@ -50,12 +50,14 @@ async function CommuteSystemDetails({
   );
 
   return (
-    <Stack direction="column">
-      <CommuteStationCards
-        commuteSystemName={commuteSystem.name}
-        commuteStations={commuteStations}
-      />
-    </Stack>
+    <>
+      <Typography component="h2" variant="h2">
+        Stations for {commuteSystem.name}
+      </Typography>
+      <br />
+      <br />
+      <CommuteStationCards commuteStations={commuteStations} />
+    </>
   );
 }
 

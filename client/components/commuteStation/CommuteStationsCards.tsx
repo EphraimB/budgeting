@@ -12,10 +12,8 @@ import CommuteStationEdit from "./CommuteStationEdit";
 import { Box, Fab, Stack } from "@mui/material";
 
 function CommuteStationCards({
-  commuteSystemName,
   commuteStations,
 }: {
-  commuteSystemName: string;
   commuteStations: CommuteStation[];
 }) {
   const [showCommuteStationForm, setShowCommuteStationForm] = useState(false);

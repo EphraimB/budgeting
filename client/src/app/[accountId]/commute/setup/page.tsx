@@ -21,7 +21,7 @@ async function CommuteSetup() {
 
   return (
     <>
-      <Typography component="h2" variant="h6">
+      <Typography component="h2" variant="h2">
         Setup
       </Typography>
       <br />

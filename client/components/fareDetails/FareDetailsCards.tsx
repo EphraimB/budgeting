@@ -1,38 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { CommuteStation, FareDetail } from "@/app/types/types";
+import { FareDetail } from "@/app/types/types";
 import AddIcon from "@mui/icons-material/Add";
 import Grid from "@mui/material/Grid2";
-import { Card, IconButton, Stack, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { ArrowBack, ArrowDownward } from "@mui/icons-material";
-import { usePathname } from "next/navigation";
+import { Box, Card, Fab, Stack } from "@mui/material";
 import AnalogClock from "./AnalogClock";
 import FareDetailView from "./FareDetailView";
 
-function FareDetailsCards({
-  commuteSystemName,
-  commuteStation,
-  fareDetails,
-}: {
-  commuteSystemName: string;
-  commuteStation: CommuteStation;
-  fareDetails: FareDetail[];
-}) {
+function FareDetailsCards({ fareDetails }: { fareDetails: FareDetail[] }) {
   const [showFareDetailForm, setShowFareDetailForm] = useState(false);
   const [fareDetailModes, setFareDetailModes] = useState<
     Record<number, string>
   >({});
-
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const parentPath = pathname.split("/").slice(0, -1).join("/"); // Remove the last segment
-
-  const goBack = () => {
-    router.push(parentPath);
-  };
 
   const colors = [
     { light: "#FFCCCB", dark: "#FF6347" }, // Sunday (Tomato) - Light & Dark
@@ -46,32 +26,6 @@ function FareDetailsCards({
 
   return (
     <Stack direction="column" spacing={2}>
-      <Stack direction="row" spacing={2} sx={{ backgroundColor: "gray" }}>
-        <IconButton onClick={() => goBack()}>
-          <ArrowBack />
-        </IconButton>
-        <Typography
-          component="h6"
-          variant="h6"
-          sx={{
-            flexGrow: 1, // Allows this element to take up the remaining space
-            textAlign: "center",
-          }}
-        >
-          {commuteSystemName}-
-          <Stack
-            direction="column"
-            sx={{ border: "1 px solid black", alignItems: "center" }}
-          >
-            {commuteStation.fromStation}
-            <ArrowDownward />
-            {commuteStation.toStation}
-          </Stack>
-        </Typography>
-        <IconButton onClick={() => setShowFareDetailForm(true)}>
-          <AddIcon />
-        </IconButton>
-      </Stack>
       <Grid container spacing={2}>
         {showFareDetailForm && (
           <Grid key="new-fare-detail" size={{ xs: 6 }}>
@@ -125,6 +79,12 @@ function FareDetailsCards({
           </Grid>
         ))}
       </Grid>
+      <br />
+      <Box sx={{ position: "fixed", bottom: 16, right: 16 }}>
+        <Fab color="primary" onClick={() => setShowFareDetailForm(true)}>
+          <AddIcon />
+        </Fab>
+      </Box>
     </Stack>
   );
 }
