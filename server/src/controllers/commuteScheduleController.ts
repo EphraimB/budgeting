@@ -22,7 +22,6 @@ export const getCommuteSchedule = async (
         const { rows } = await client.query(
             `
             SELECT
-                account_id,
                 JSON_AGG(
                     JSON_BUILD_OBJECT(
                         'dayOfWeek', day_of_week,
@@ -50,8 +49,6 @@ export const getCommuteSchedule = async (
                 GROUP BY 
                     fd.account_id, cs.day_of_week
             ) AS subquery
-            GROUP BY 
-                account_id
             `,
             [],
         );

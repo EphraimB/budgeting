@@ -1,13 +1,48 @@
 "use client";
 
+import { FullCommuteSchedule } from "@/app/types/types";
 import { Stack, Box, Divider, Typography, Chip } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { usePathname } from "next/navigation";
+import Grid from "@mui/material/Grid2";
 
-export default function CommutePanels() {
+export default function CommutePanels({
+  commuteSchedule,
+}: {
+  commuteSchedule: FullCommuteSchedule[];
+}) {
   const pathname = usePathname();
 
   const isMobile = useMediaQuery("(max-width:600px)", { noSsr: true });
+
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  const startTime = 8; // 8:00 AM
+  const endTime = 18; // 6:00 PM
+  const interval = 30; // 30 minutes
+
+  const generateTimeSlots = () => {
+    const timeSlots = [];
+    for (let i = startTime; i < endTime; i += interval / 60) {
+      const hour = Math.floor(i);
+      const minute = (i % 1) * 60;
+      const time = `${hour.toString().padStart(2, "0")}:${minute
+        .toString()
+        .padStart(2, "0")}`;
+      timeSlots.push(time);
+    }
+    return timeSlots;
+  };
+
+  const timeslots = generateTimeSlots();
 
   return (
     <>
@@ -75,7 +110,34 @@ export default function CommutePanels() {
             justifyContent: "center",
           }}
         >
-          {/* Original panel 2 content */}
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12 }}>
+              <Typography variant="h4">Weekly Commute Schedule</Typography>
+            </Grid>
+            {daysOfWeek.map((day, index) => (
+              <Grid key={index} size={{ xs: 12 }}>
+                <Typography variant="h5">{day}</Typography>
+                {commuteSchedule
+                  .filter((schedule) => schedule.dayOfWeek === index + 1)
+                  .map((schedule) => (
+                    <Grid key={schedule.dayOfWeek} size={{ xs: 12 }}>
+                      {schedule.commuteSchedules.map((commute) => (
+                        <Grid key={commute.id} size={{ xs: 12 }}>
+                          <Box
+                            sx={{ backgroundColor: "lightgray", padding: 1 }}
+                          >
+                            <Typography variant="body1">
+                              {commute.pass} - {commute.startTime} to{" "}
+                              {commute.endTime} (${commute.fare})
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  ))}
+              </Grid>
+            ))}
+          </Grid>
         </Box>
 
         {/* Panel 3 */}

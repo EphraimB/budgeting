@@ -223,14 +223,17 @@ export interface FareDetail {
   dateModified: string;
 }
 
+export interface FullCommuteSchedule {
+  dayOfWeek: number;
+  commuteSchedules: CommuteSchedule[];
+}
+
 export interface CommuteSchedule {
   id: number;
   startTime: string;
   endTime: string;
   fare: number;
   pass: string;
-  dateCreated: string;
-  dateModified: string;
 }
 
 export interface GeneratedTransaction {
