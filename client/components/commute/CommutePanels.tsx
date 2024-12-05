@@ -1,10 +1,11 @@
 "use client";
 
 import { FullCommuteSchedule } from "@/app/types/types";
-import { Stack, Box, Divider, Typography, Chip } from "@mui/material";
+import { Stack, Box, Divider, Typography, Chip, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { usePathname } from "next/navigation";
 import Grid from "@mui/material/Grid2";
+import Link from "next/link";
 
 export default function CommutePanels({
   commuteSchedule,
@@ -89,17 +90,16 @@ export default function CommutePanels({
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Chip
-              label="Setup"
-              component="a"
-              href={`${pathname}/setup`}
-              variant="outlined"
-              clickable
-            />
+            <Link href={`${pathname}/setup`}>
+              <Button variant="contained">Setup</Button>
+            </Link>
           </Box>
-          <br />
-          <br />
-          <Typography>Tickets will generate based on the setup</Typography>
+          {/* Add spacing here */}
+          <Box sx={{ mt: 4 }}>
+            {" "}
+            {/* mt: 4 adds margin top */}
+            <Typography>Tickets will generate based on the setup</Typography>
+          </Box>
         </Box>
 
         {/* Panel 2 */}

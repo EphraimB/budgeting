@@ -1,6 +1,5 @@
 import { CommuteSystem } from "@/app/types/types";
 import CommuteSystemCards from "../../../../../components/commuteSystem/CommuteSystemCards";
-import { Typography } from "@mui/material";
 
 async function getCommuteSystems() {
   try {
@@ -19,16 +18,7 @@ async function getCommuteSystems() {
 async function CommuteSetup() {
   const commuteSystems: CommuteSystem[] = await getCommuteSystems();
 
-  return (
-    <>
-      <Typography component="h2" variant="h2">
-        Setup
-      </Typography>
-      <br />
-      <br />
-      <CommuteSystemCards commuteSystems={commuteSystems} />
-    </>
-  );
+  return <CommuteSystemCards commuteSystems={commuteSystems} />;
 }
 
 export default CommuteSetup;
