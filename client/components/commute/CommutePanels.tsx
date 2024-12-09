@@ -118,7 +118,7 @@ export default function CommutePanels({
               <Grid key={index} size={{ xs: 12 }}>
                 <Typography variant="h5">{day}</Typography>
                 {commuteSchedule
-                  .filter((schedule) => schedule.dayOfWeek === index + 1)
+                  .filter((schedule) => schedule.dayOfWeek === index)
                   .map((schedule) => (
                     <Grid key={schedule.dayOfWeek} size={{ xs: 12 }}>
                       {schedule.commuteSchedules.map((commute) => (
