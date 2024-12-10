@@ -49,8 +49,8 @@ function AnalogClock({
         }}
       />
       {dayTimeslots.map((slot, index) => {
-        const startAngle = convertTimeToDegrees(slot.startTime) - 90; // Adjust start angle
-        const endAngle = convertTimeToDegrees(slot.endTime) - 90; // Adjust end angle
+        const startAngle = 90 - convertTimeToDegrees(slot.startTime); // Adjust start angle
+        const endAngle = 90 - convertTimeToDegrees(slot.endTime); // Adjust end angle
 
         return (
           <Tooltip
@@ -67,15 +67,17 @@ function AnalogClock({
                 width: "100%",
                 height: "100%",
                 borderRadius: "50%",
-                "::after": {
+                "&::before": {
                   content: '""',
                   position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "calc(100% + 20px)",
+                  height: "calc(100% + 20px)",
                   borderRadius: "50%",
                   background: `conic-gradient(from ${startAngle}deg at 50% 50%, ${darkColor} ${startAngle}deg, transparent ${startAngle}deg ${endAngle}deg, ${darkColor} ${endAngle}deg)`,
+                  zIndex: -1,
                 },
               }}
             />
