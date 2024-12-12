@@ -6,6 +6,8 @@ import AddIcon from "@mui/icons-material/Add";
 import Grid from "@mui/material/Grid2";
 import { Box, Card, Fab, Stack } from "@mui/material";
 import FareDetailView from "./FareDetailView";
+import NewFareDetailForm from "./NewFareDetailForm";
+import FareDetailDelete from "./FareDetailDelete";
 
 function FareDetailsCards({ fareDetails }: { fareDetails: FareDetail[] }) {
   const [showFareDetailForm, setShowFareDetailForm] = useState(false);
@@ -13,22 +15,15 @@ function FareDetailsCards({ fareDetails }: { fareDetails: FareDetail[] }) {
     Record<number, string>
   >({});
 
-  const colors = [
-    { light: "#FFCCCB", dark: "#FF6347" }, // Sunday (Tomato) - Light & Dark
-    { light: "#FF7F50", dark: "#FF4500" }, // Monday (OrangeRed) - Light & Dark
-    { light: "#FFFACD", dark: "#FFD700" }, // Tuesday (Gold) - Light & Dark
-    { light: "#98FB98", dark: "#32CD32" }, // Wednesday (LimeGreen) - Light & Dark
-    { light: "#ADD8E6", dark: "#1E90FF" }, // Thursday (DodgerBlue) - Light & Dark
-    { light: "#D8BFD8", dark: "#8A2BE2" }, // Friday (BlueViolet) - Light & Dark
-    { light: "#FFB6C1", dark: "#FF1493" }, // Saturday (DeepPink) - Light & Dark
-  ];
-
   return (
     <Stack direction="column" spacing={2}>
       <Grid container spacing={2}>
         {showFareDetailForm && (
-          <Grid key="new-fare-detail" size={{ xs: 6 }}>
-            {/* <NewFareDetailForm showFareDetailForm={showFareDetailForm} /> */}
+          <Grid key="new-fare-detail">
+            <NewFareDetailForm
+              setShowFareDetailForm={setShowFareDetailForm}
+              fareDetails={fareDetails}
+            />
           </Grid>
         )}
 
@@ -36,11 +31,10 @@ function FareDetailsCards({ fareDetails }: { fareDetails: FareDetail[] }) {
           <Grid key={fareDetail.id}>
             <Card>
               {fareDetailModes[fareDetail.id] === "delete" ? (
-                // <FareDetailDelete
-                //   fareDetail={fareDetail}
-                //   setFareDetailModes={setFareDetailModes}
-                // />
-                <></>
+                <FareDetailDelete
+                  fareDetail={fareDetail}
+                  setFareDetailModes={setFareDetailModes}
+                />
               ) : fareDetailModes[fareDetail.id] === "edit" ? (
                 // <FareDetailEdit
                 //   fareDetail={fareDetail}
