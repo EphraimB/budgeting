@@ -5,7 +5,6 @@ import { FareDetail } from "@/app/types/types";
 import AddIcon from "@mui/icons-material/Add";
 import Grid from "@mui/material/Grid2";
 import { Box, Card, Fab, Stack } from "@mui/material";
-import AnalogClock from "./AnalogClock";
 import FareDetailView from "./FareDetailView";
 
 function FareDetailsCards({ fareDetails }: { fareDetails: FareDetail[] }) {
@@ -35,36 +34,15 @@ function FareDetailsCards({ fareDetails }: { fareDetails: FareDetail[] }) {
 
         {fareDetails.map((fareDetail: FareDetail) => (
           <Grid key={fareDetail.id}>
-            <Card
-              sx={{
-                position: "relative",
-                borderRadius: "50%",
-                width: "300px",
-                height: "300px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {/* Render 7 rings for each day of the week */}
-              {Array.from({ length: 7 }).map((_, dayIndex) => (
-                <AnalogClock
-                  key={dayIndex}
-                  timeslots={fareDetail.timeslots}
-                  dayOfWeek={dayIndex}
-                  lightColor={colors[dayIndex].light}
-                  darkColor={colors[dayIndex].dark}
-                  size={`calc(100% - ${(dayIndex + 1) * 20}px)`} // Smaller rings as dayIndex increases
-                />
-              ))}
+            <Card>
               {fareDetailModes[fareDetail.id] === "delete" ? (
-                // <fareDetailDelete
+                // <FareDetailDelete
                 //   fareDetail={fareDetail}
                 //   setFareDetailModes={setFareDetailModes}
                 // />
                 <></>
               ) : fareDetailModes[fareDetail.id] === "edit" ? (
-                // <fareDetailEdit
+                // <FareDetailEdit
                 //   fareDetail={fareDetail}
                 //   setFareDetailModes={setFareDetailModes}
                 // />

@@ -6,6 +6,7 @@ import { FareDetail } from "@/app/types/types";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { Box } from "@mui/material";
+import FareDetailActionsMenu from "./FareDetailActionsMenu";
 
 function FareDetailView({
   fareDetail,
@@ -44,13 +45,13 @@ function FareDetailView({
       >
         <MoreVert />
       </IconButton>
-      {/* <FareDetailActionsMenu
+      <FareDetailActionsMenu
         anchorEl={anchorEl}
         open={open}
         handleClose={handleClose}
         setFareDetailModes={setFareDetailModes}
         fareDetailId={fareDetail.id}
-      /> */}
+      />
       <CardContent>
         <Box>
           <strong>{fareDetail.name}</strong>
