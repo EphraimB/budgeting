@@ -5,7 +5,13 @@ import dayjs from "dayjs";
 import { Timeslot } from "@/app/types/types";
 import { createTheme } from "@mui/material/styles";
 
-function TimeslotBar({ timeslots }: { timeslots: Timeslot[] }) {
+function TimeslotBar({
+  timeslot,
+  index,
+}: {
+  timeslot: Timeslot;
+  index: number;
+}) {
   // Define your custom theme
   const theme = createTheme({
     palette: {
@@ -24,32 +30,27 @@ function TimeslotBar({ timeslots }: { timeslots: Timeslot[] }) {
   };
 
   return (
-    <>
-      {timeslots.map((timeslot, index) => (
-        <Tooltip
-          key={index}
-          title={
-            dayjs(timeslot.startTime, "HH:mm:ss").format("h:mm:ss A") +
-            "-" +
-            dayjs(timeslot.endTime, "HH:mm:ss").format("h:mm:ss A")
-          }
-          placement="top"
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              height: "100%",
-              backgroundColor: theme.palette.primary.main,
-              left: `${timeToPercent(timeslot.startTime)}%`,
-              width: `${
-                timeToPercent(timeslot.endTime) -
-                timeToPercent(timeslot.startTime)
-              }%`,
-            }}
-          />
-        </Tooltip>
-      ))}
-    </>
+    <Tooltip
+      key={index}
+      title={
+        dayjs(timeslot.startTime, "HH:mm:ss").format("h:mm:ss A") +
+        "-" +
+        dayjs(timeslot.endTime, "HH:mm:ss").format("h:mm:ss A")
+      }
+      placement="top"
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          height: "100%",
+          backgroundColor: theme.palette.primary.main,
+          left: `${timeToPercent(timeslot.startTime)}%`,
+          width: `${
+            timeToPercent(timeslot.endTime) - timeToPercent(timeslot.startTime)
+          }%`,
+        }}
+      />
+    </Tooltip>
   );
 }
 

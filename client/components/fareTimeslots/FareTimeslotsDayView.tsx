@@ -5,21 +5,27 @@ import Paper from "@mui/material/Paper";
 import { Typography } from "@mui/material";
 import { FareDetail } from "@/app/types/types";
 import Grid from "@mui/material/Grid2";
-import TimeslotBar from "./TimeslotBar";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
+import TimeslotView from "./TimeslotView";
+import DayOfWeekModal from "./DayOfWeekModal";
 
 function FareTimeslotsDayView({
   accountId,
+  commuteSystemId,
   stationId,
   fareDetail,
 }: {
   accountId: number;
+  commuteSystemId: number;
   stationId: number;
   fareDetail: FareDetail;
 }) {
+  const [modalState, setModalState] = useState<{
+    open: boolean;
+    dayOfWeek: number | null;
+  }>({ open: false, dayOfWeek: null });
+
+  const [timeslots, setTimeslots] = useState(fareDetail.timeslots);
+
   const days = [
     "Sunday",
     "Monday",
@@ -30,17 +36,11 @@ function FareTimeslotsDayView({
     "Saturday",
   ];
 
-  const [timeslots, setTimeslots] = useState(fareDetail.timeslots);
-
-  const handleTimeChange = (
-    index: number,
-    field: "startTime" | "endTime",
-    newValue: string
-  ) => {
-    const updatedTimeslots = timeslots.map((slot, i) =>
-      i === index ? { ...slot, [field]: newValue } : slot
-    );
-    setTimeslots(updatedTimeslots);
+  const handleOpenModal = (day: number) => {
+    setModalState({
+      open: true,
+      dayOfWeek: day,
+    });
   };
 
   return (
@@ -63,41 +63,30 @@ function FareTimeslotsDayView({
             >
               {day}
             </Typography>
-            <TimeslotBar
-              timeslots={timeslots.filter((slot) => slot.dayOfWeek === index)}
+            <TimeslotView
+              scheduleDayOfWeek={fareDetail.timeslots.filter(
+                (js) => js.dayOfWeek === index
+              )}
+              dayOfWeek={index}
+              handleOpenModal={handleOpenModal}
             />
-            {timeslots
-              .filter((slot) => slot.dayOfWeek === index)
-              .map((timeslot, timeslotIndex) => (
-                <LocalizationProvider
-                  key={timeslotIndex}
-                  dateAdapter={AdapterDayjs}
-                >
-                  <TimePicker
-                    label="Start Time"
-                    value={dayjs(timeslot.startTime, "HH:mm:ss")}
-                    onChange={(newValue) =>
-                      handleTimeChange(
-                        timeslotIndex,
-                        "startTime",
-                        newValue ? newValue.format("HH:mm:ss") : ""
-                      )
-                    }
-                  />
-                  <TimePicker
-                    label="End Time"
-                    value={dayjs(timeslot.endTime, "HH:mm:ss")}
-                    onChange={(newValue) =>
-                      handleTimeChange(
-                        timeslotIndex,
-                        "endTime",
-                        newValue ? newValue.format("HH:mm:ss") : ""
-                      )
-                    }
-                  />
-                </LocalizationProvider>
-              ))}
           </Paper>
+          {modalState.dayOfWeek !== null && (
+            <DayOfWeekModal
+              accountId={accountId}
+              commuteSystemId={commuteSystemId}
+              stationId={stationId}
+              fareDetail={fareDetail}
+              scheduleDayOfWeek={fareDetail.timeslots.filter(
+                (js) => js.dayOfWeek === modalState.dayOfWeek
+              )}
+              dayOfWeek={modalState.dayOfWeek}
+              open={modalState.open}
+              setOpen={(isOpen) =>
+                setModalState((prevState) => ({ ...prevState, open: isOpen }))
+              }
+            />
+          )}
         </Grid>
       ))}
     </Grid>

@@ -23,11 +23,13 @@ async function FareTimeslotDetails({
 }: {
   params: {
     accountId: string;
+    commuteSystemId: string;
     stationId: string;
     fareDetailId: string;
   };
 }) {
   const accountId = parseInt(params.accountId);
+  const commuteSystemId = parseInt(params.commuteSystemId);
   const stationId = parseInt(params.stationId);
   const fareDetailId = parseInt(params.fareDetailId);
 
@@ -37,13 +39,14 @@ async function FareTimeslotDetails({
     <>
       <Stack direction="row">
         <Typography component="h2" variant="h2">
-          Timeslots for {fareDetail.name}
+          Timeslots for {fareDetail.name} fare
         </Typography>
       </Stack>
       <br />
       <br />
       <FareTimeslotsDayView
         accountId={accountId}
+        commuteSystemId={commuteSystemId}
         stationId={stationId}
         fareDetail={fareDetail}
       />
