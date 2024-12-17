@@ -176,9 +176,6 @@ function DayOfWeekModal({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        "& .MuiBackdrop-root": {
-          backgroundColor: "transparent",
-        },
       }}
     >
       <Stack

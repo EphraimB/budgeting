@@ -69,23 +69,23 @@ function FareTimeslotsDayView({
               handleOpenModal={handleOpenModal}
             />
           </Paper>
-          {modalState.dayOfWeek !== null && (
-            <DayOfWeekModal
-              accountId={accountId}
-              stationId={stationId}
-              fareDetail={fareDetail}
-              scheduleDayOfWeek={fareDetail.timeslots.filter(
-                (js) => js.dayOfWeek === modalState.dayOfWeek
-              )}
-              dayOfWeek={modalState.dayOfWeek}
-              open={modalState.open}
-              setOpen={(isOpen) =>
-                setModalState((prevState) => ({ ...prevState, open: isOpen }))
-              }
-            />
-          )}
         </Grid>
       ))}
+      {modalState.dayOfWeek !== null && (
+        <DayOfWeekModal
+          accountId={accountId}
+          stationId={stationId}
+          fareDetail={fareDetail}
+          scheduleDayOfWeek={fareDetail.timeslots.filter(
+            (js) => js.dayOfWeek === modalState.dayOfWeek
+          )}
+          dayOfWeek={modalState.dayOfWeek}
+          open={modalState.open}
+          setOpen={(isOpen) =>
+            setModalState((prevState) => ({ ...prevState, open: isOpen }))
+          }
+        />
+      )}
     </Grid>
   );
 }
