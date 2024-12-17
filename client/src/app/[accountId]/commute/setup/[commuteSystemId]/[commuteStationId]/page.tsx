@@ -54,8 +54,13 @@ async function getFareDetails(commuteStationId: number) {
 async function CommuteStationDetails({
   params,
 }: {
-  params: { commuteSystemId: string; commuteStationId: string };
+  params: {
+    accountId: string;
+    commuteSystemId: string;
+    commuteStationId: string;
+  };
 }) {
+  const accountId = parseInt(params.accountId);
   const commuteSystemId = parseInt(params.commuteSystemId);
   const commuteStationId = parseInt(params.commuteStationId);
 
@@ -94,6 +99,7 @@ async function CommuteStationDetails({
       <br />
       <br />
       <FareDetailsCards
+        accountId={accountId}
         commuteSystemId={commuteSystemId}
         commuteStationId={commuteStationId}
         fareDetails={fareDetails}

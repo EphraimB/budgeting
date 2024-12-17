@@ -27,11 +27,13 @@ import { addFareDetail } from "../../services/actions/fareDetail";
 
 function NewFareDetailForm({
   setShowFareDetailForm,
+  accountId,
   commuteSystemId,
   commuteStationId,
   fareDetails,
 }: {
   setShowFareDetailForm: (showFareDetailForm: boolean) => void;
+  accountId: number;
   commuteSystemId: number;
   commuteStationId: number;
   fareDetails: FareDetail[];
@@ -50,6 +52,7 @@ function NewFareDetailForm({
   const { showAlert } = useAlert();
 
   const data = {
+    accountId,
     commuteSystemId,
     stationId: commuteStationId,
     name,

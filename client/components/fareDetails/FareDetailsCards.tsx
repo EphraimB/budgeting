@@ -11,10 +11,12 @@ import FareDetailDelete from "./FareDetailDelete";
 import FareDetailEdit from "./FareDetailEdit";
 
 function FareDetailsCards({
+  accountId,
   commuteSystemId,
   commuteStationId,
   fareDetails,
 }: {
+  accountId: number;
   commuteSystemId: number;
   commuteStationId: number;
   fareDetails: FareDetail[];
@@ -31,6 +33,7 @@ function FareDetailsCards({
           <Grid key="new-fare-detail">
             <NewFareDetailForm
               setShowFareDetailForm={setShowFareDetailForm}
+              accountId={accountId}
               commuteSystemId={commuteSystemId}
               commuteStationId={commuteStationId}
               fareDetails={fareDetails}
@@ -48,6 +51,7 @@ function FareDetailsCards({
                 />
               ) : fareDetailModes[fareDetail.id] === "edit" ? (
                 <FareDetailEdit
+                  accountId={accountId}
                   commuteSystemId={commuteSystemId}
                   commuteStationId={commuteStationId}
                   fareDetails={fareDetails}

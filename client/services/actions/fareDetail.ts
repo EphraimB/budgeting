@@ -4,6 +4,7 @@ import { Timeslot } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
 export interface FareDetailRequest {
+  accountId: number;
   commuteSystemId: number;
   stationId: number;
   name: string;

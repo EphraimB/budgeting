@@ -23,16 +23,21 @@ import {
 } from "@mui/material";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { FareDetail } from "@/app/types/types";
-import { addFareDetail } from "../../services/actions/fareDetail";
+import {
+  addFareDetail,
+  editFareDetail,
+} from "../../services/actions/fareDetail";
 
 function FareDetailEdit({
   setFareDetailModes,
+  accountId,
   commuteSystemId,
   commuteStationId,
   fareDetails,
   fareDetail,
 }: {
   setFareDetailModes: (fareDetailModes: Record<number, string>) => void;
+  accountId: number;
   commuteSystemId: number;
   commuteStationId: number;
   fareDetails: FareDetail[];
@@ -56,6 +61,7 @@ function FareDetailEdit({
   const { showAlert } = useAlert();
 
   const data = {
+    accountId,
     commuteSystemId,
     stationId: commuteStationId,
     name,
@@ -82,7 +88,7 @@ function FareDetailEdit({
     if (isNameValid) {
       // Submit data
       try {
-        await addFareDetail(data);
+        await editFareDetail(data, fareDetail.id);
 
         // Show success message
         showSnackbar(`Fare detail "${name}" created successfully`);
