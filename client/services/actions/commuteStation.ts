@@ -21,8 +21,6 @@ export async function addCommuteStation(commuteStation: CommuteStationRequest) {
   );
   const result = await response.json();
 
-  console.log(result);
-
   revalidatePath("/[accountId]", "page");
 
   return result;
@@ -43,8 +41,6 @@ export async function editCommuteStation(
     }
   );
   const result = await response.json();
-
-  console.log(result);
 
   revalidatePath("/[accountId]", "page");
   return result;
