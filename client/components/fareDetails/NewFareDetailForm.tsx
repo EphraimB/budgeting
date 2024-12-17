@@ -276,7 +276,7 @@ function NewFareDetailForm({
             <Button
               size="small"
               onClick={handleNext}
-              disabled={activeStep === 1}
+              disabled={activeStep === 2}
             >
               Next
               {theme.direction === "rtl" ? (

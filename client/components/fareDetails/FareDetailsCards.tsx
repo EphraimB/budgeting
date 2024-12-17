@@ -40,7 +40,7 @@ function FareDetailsCards({
 
         {fareDetails.map((fareDetail: FareDetail) => (
           <Grid key={fareDetail.id}>
-            <Card>
+            <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {fareDetailModes[fareDetail.id] === "delete" ? (
                 <FareDetailDelete
                   fareDetail={fareDetail}
