@@ -203,7 +203,7 @@ function NewFareDetailForm({
                   onChange={handleTimedPassEnabledChange}
                 />
               }
-              label="Fare cap enabled"
+              label="Fare duration enabled"
             />
             {timedPassEnabled && (
               <>
