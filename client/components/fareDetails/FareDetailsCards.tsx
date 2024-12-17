@@ -9,7 +9,15 @@ import FareDetailView from "./FareDetailView";
 import NewFareDetailForm from "./NewFareDetailForm";
 import FareDetailDelete from "./FareDetailDelete";
 
-function FareDetailsCards({ fareDetails }: { fareDetails: FareDetail[] }) {
+function FareDetailsCards({
+  commuteSystemId,
+  commuteStationId,
+  fareDetails,
+}: {
+  commuteSystemId: number;
+  commuteStationId: number;
+  fareDetails: FareDetail[];
+}) {
   const [showFareDetailForm, setShowFareDetailForm] = useState(false);
   const [fareDetailModes, setFareDetailModes] = useState<
     Record<number, string>
@@ -22,6 +30,8 @@ function FareDetailsCards({ fareDetails }: { fareDetails: FareDetail[] }) {
           <Grid key="new-fare-detail">
             <NewFareDetailForm
               setShowFareDetailForm={setShowFareDetailForm}
+              commuteSystemId={commuteSystemId}
+              commuteStationId={commuteStationId}
               fareDetails={fareDetails}
             />
           </Grid>

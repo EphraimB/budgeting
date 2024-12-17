@@ -93,7 +93,11 @@ async function CommuteStationDetails({
       </Stack>
       <br />
       <br />
-      <FareDetailsCards fareDetails={fareDetails} />
+      <FareDetailsCards
+        commuteSystemId={commuteSystemId}
+        commuteStationId={commuteStationId}
+        fareDetails={fareDetails}
+      />
     </>
   );
 }

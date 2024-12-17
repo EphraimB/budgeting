@@ -27,9 +27,13 @@ import { addFareDetail } from "../../services/actions/fareDetail";
 
 function NewFareDetailForm({
   setShowFareDetailForm,
+  commuteSystemId,
+  commuteStationId,
   fareDetails,
 }: {
   setShowFareDetailForm: (showFareDetailForm: boolean) => void;
+  commuteSystemId: number;
+  commuteStationId: number;
   fareDetails: FareDetail[];
 }) {
   const [name, setName] = useState("");
@@ -46,8 +50,10 @@ function NewFareDetailForm({
   const { showAlert } = useAlert();
 
   const data = {
+    commuteSystemId,
+    stationId: commuteStationId,
     name,
-    fare,
+    fare: parseInt(fare),
     timeslots: [],
     duration,
     dayStart,
