@@ -396,7 +396,7 @@ export const updateFareDetail = async (
             return;
         }
 
-        const { rows: currentTimeslots } = await client.query(
+        await client.query(
             `
                 SELECT *
                     FROM timeslots
@@ -450,6 +450,8 @@ export const updateFareDetail = async (
                 id,
             ],
         );
+
+        console.log(updateFareDetailResults)
 
         await client.query('COMMIT;');
 
