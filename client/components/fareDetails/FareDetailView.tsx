@@ -7,6 +7,8 @@ import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { Box } from "@mui/material";
 import FareDetailActionsMenu from "./FareDetailActionsMenu";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function FareDetailView({
   fareDetail,
@@ -19,6 +21,8 @@ function FareDetailView({
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const pathname = usePathname();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -52,12 +56,17 @@ function FareDetailView({
         setFareDetailModes={setFareDetailModes}
         fareDetailId={fareDetail.id}
       />
-      <CardContent>
-        <Box>
-          <strong>{fareDetail.name}</strong>
-        </Box>
-        <Box>${fareDetail.fare}</Box>
-      </CardContent>
+      <Link
+        href={`${pathname}/${fareDetail.id}`}
+        style={{ textDecoration: "none", color: "inherit" }}
+      >
+        <CardContent>
+          <Box>
+            <strong>{fareDetail.name}</strong>
+          </Box>
+          <Box>${fareDetail.fare}</Box>
+        </CardContent>
+      </Link>
     </>
   );
 }
