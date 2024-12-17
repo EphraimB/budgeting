@@ -405,48 +405,40 @@ export const updateFareDetail = async (
             [id],
         );
 
-        const { toInsert, toDelete, toUpdate } = compareTimeslots(
-            currentTimeslots,
-            timeslots,
-        );
-
         await client.query('BEGIN;');
 
-        toDelete.forEach(async (timeslot) => {
-            await client.query(
-                `
-                    DELETE FROM timeslots
-                        WHERE id = $1
-                `,
-                [timeslot.timeslot_id],
-            );
-        });
+        // Delete all existing timeslots
+        await client.query('DELETE FROM timeslots WHERE fare_details_id = $1', [
+            id,
+        ]);
 
-        toInsert.forEach(async (timeslot) => {
+        // Insert new timeslots
+        timeslots.forEach(async (timeslot: Timeslots) => {
             await client.query(
                 `
-                    INSERT INTO timeslots
-                    (fare_details_id, day_of_week, start_time, end_time)
-                    VALUES ($1, $2, $3, $4)
-                    RETURNING *
-                `,
+            INSERT INTO timeslots
+            (fare_details_id, day_of_week, start_time, end_time)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+        `,
                 [id, timeslot.dayOfWeek, timeslot.startTime, timeslot.endTime],
             );
         });
 
+        // Update fare details
         const { rows: updateFareDetailResults } = await client.query(
             `
-                UPDATE fare_details
-                SET station_id = $1,
-                account_id = $2,
-                name = $3,
-                fare = $4,
-                duration = $5,
-                day_start = $6,
-                alternate_fare_details_id = $7
-                WHERE id = $8
-                RETURNING *
-            `,
+        UPDATE fare_details
+        SET station_id = $1,
+        account_id = $2,
+        name = $3,
+        fare = $4,
+        duration = $5,
+        day_start = $6,
+        alternate_fare_details_id = $7
+        WHERE id = $8
+        RETURNING *
+    `,
             [
                 stationId,
                 accountId,
