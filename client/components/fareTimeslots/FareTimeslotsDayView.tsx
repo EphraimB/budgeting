@@ -24,8 +24,6 @@ function FareTimeslotsDayView({
     dayOfWeek: number | null;
   }>({ open: false, dayOfWeek: null });
 
-  const [timeslots, setTimeslots] = useState(fareDetail.timeslots);
-
   const days = [
     "Sunday",
     "Monday",
@@ -74,7 +72,6 @@ function FareTimeslotsDayView({
           {modalState.dayOfWeek !== null && (
             <DayOfWeekModal
               accountId={accountId}
-              commuteSystemId={commuteSystemId}
               stationId={stationId}
               fareDetail={fareDetail}
               scheduleDayOfWeek={fareDetail.timeslots.filter(

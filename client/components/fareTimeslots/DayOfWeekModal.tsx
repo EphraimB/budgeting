@@ -108,7 +108,6 @@ interface DayTimeslot {
 
 function DayOfWeekModal({
   accountId,
-  commuteSystemId,
   stationId,
   fareDetail,
   scheduleDayOfWeek,
@@ -117,7 +116,6 @@ function DayOfWeekModal({
   setOpen,
 }: {
   accountId: number;
-  commuteSystemId: number;
   stationId: number;
   fareDetail: FareDetail;
   scheduleDayOfWeek: Timeslot[];
@@ -151,7 +149,6 @@ function DayOfWeekModal({
       editFareDetail(
         {
           accountId,
-          commuteSystemId,
           stationId,
           name: fareDetail.name,
           fare: fareDetail.fare,

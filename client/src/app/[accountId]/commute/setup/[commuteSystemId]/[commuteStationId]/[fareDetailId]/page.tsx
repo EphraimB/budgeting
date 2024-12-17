@@ -24,13 +24,13 @@ async function FareTimeslotDetails({
   params: {
     accountId: string;
     commuteSystemId: string;
-    stationId: string;
+    commuteStationId: string;
     fareDetailId: string;
   };
 }) {
   const accountId = parseInt(params.accountId);
   const commuteSystemId = parseInt(params.commuteSystemId);
-  const stationId = parseInt(params.stationId);
+  const stationId = parseInt(params.commuteStationId);
   const fareDetailId = parseInt(params.fareDetailId);
 
   const fareDetail: FareDetail = await getFareDetails(fareDetailId);

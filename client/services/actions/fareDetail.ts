@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 
 export interface FareDetailRequest {
   accountId: number;
-  commuteSystemId: number;
   stationId: number;
   name: string;
   fare: number;
@@ -46,6 +45,8 @@ export async function editFareDetail(
     }
   );
   const result = await response.json();
+
+  console.log(result);
 
   revalidatePath("/[accountId]", "page");
   return result;

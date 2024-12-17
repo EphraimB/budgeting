@@ -40,7 +40,7 @@ router.post(
     [
         body('stationId')
             .isInt({ min: 1 })
-            .withMessage('Commute System ID must be a number'),
+            .withMessage('Station ID must be a number'),
         body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
@@ -83,7 +83,7 @@ router.put(
             .withMessage('Account ID must be a number'),
         body('stationId')
             .isInt({ min: 1 })
-            .withMessage('Commute System ID must be a number'),
+            .withMessage('Station ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('fare').isFloat().withMessage('Fare must be a number'),
         body('timeslots.*.dayOfWeek')
