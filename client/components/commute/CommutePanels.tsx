@@ -63,8 +63,7 @@ export default function CommutePanels({
             textAlign: "center",
           }}
         >
-          Drag and drop tickets from the left to the center panel or setup the
-          system
+          Commute
         </Typography>
       </Box>
       <Stack
