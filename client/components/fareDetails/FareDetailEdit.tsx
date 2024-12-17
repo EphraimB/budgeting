@@ -162,7 +162,7 @@ function FareDetailEdit({
       </IconButton>
       <br />
       <CardHeader
-        title={`Edit Fare Detail - Step ${activeStep + 1} of 2`}
+        title={`Edit Fare Detail - Step ${activeStep + 1} of 3`}
         sx={{
           textAlign: "center",
         }}
