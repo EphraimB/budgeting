@@ -2,7 +2,7 @@
 
 import { Stack, Typography, IconButton } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowBack, ArrowLeft, Close } from "@mui/icons-material";
+import { ArrowBack, Close } from "@mui/icons-material";
 
 export default function StatusBar({ title }: { title: string }) {
   const router = useRouter();
@@ -10,6 +10,8 @@ export default function StatusBar({ title }: { title: string }) {
 
   // Regex to match "/[accountId]/setup" exactly with nothing after it
   const isOnRootSetupPage = /^\/[^/]+\/setup\/?$/.test(pathname);
+
+  console.log(isOnRootSetupPage);
 
   const goBack = () => {
     const parentPath = pathname.split("/").slice(0, -1).join("/"); // Remove the last segment
@@ -37,13 +39,18 @@ export default function StatusBar({ title }: { title: string }) {
         onClick={goBack}
         disabled={isOnRootSetupPage}
         sx={{ color: "white" }}
+        data-testid="arrow-back-button"
       >
         <ArrowBack />
       </IconButton>
       <Typography component="h6" variant="h6">
         {title}
       </Typography>
-      <IconButton onClick={close} sx={{ color: "white" }}>
+      <IconButton
+        onClick={close}
+        sx={{ color: "white" }}
+        data-testid="close-button"
+      >
         <Close />
       </IconButton>
     </Stack>
