@@ -56,7 +56,10 @@ async function CommuteSystemDetails({
       </Typography>
       <br />
       <br />
-      <CommuteStationCards commuteStations={commuteStations} />
+      <CommuteStationCards
+        commuteSystemId={commuteSystemId}
+        commuteStations={commuteStations}
+      />
     </>
   );
 }

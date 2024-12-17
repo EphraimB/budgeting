@@ -12,8 +12,10 @@ import CommuteStationEdit from "./CommuteStationEdit";
 import { Box, Fab, Stack } from "@mui/material";
 
 function CommuteStationCards({
+  commuteSystemId,
   commuteStations,
 }: {
+  commuteSystemId: number;
   commuteStations: CommuteStation[];
 }) {
   const [showCommuteStationForm, setShowCommuteStationForm] = useState(false);
@@ -27,6 +29,7 @@ function CommuteStationCards({
         {showCommuteStationForm && (
           <Grid key="new-commute-station">
             <NewCommuteStationForm
+              commuteSystemId={commuteSystemId}
               setShowCommuteStationForm={setShowCommuteStationForm}
             />
           </Grid>
@@ -42,6 +45,7 @@ function CommuteStationCards({
                 />
               ) : commuteStationModes[commuteStation.id] === "edit" ? (
                 <CommuteStationEdit
+                  commuteSystemId={commuteSystemId}
                   commuteStation={commuteStation}
                   setCommuteStationModes={setCommuteStationModes}
                 />

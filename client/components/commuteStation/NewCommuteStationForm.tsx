@@ -19,8 +19,10 @@ import {
 import { addCommuteStation } from "../../services/actions/commuteStation";
 
 function NewCommuteStationForm({
+  commuteSystemId,
   setShowCommuteStationForm,
 }: {
+  commuteSystemId: number;
   setShowCommuteStationForm: (showCommuteStationForm: boolean) => void;
 }) {
   const [fromStation, setFromStation] = useState("");
@@ -35,6 +37,7 @@ function NewCommuteStationForm({
   const { showAlert } = useAlert();
 
   const data = {
+    commuteSystemId,
     fromStation,
     toStation,
     tripDuration,

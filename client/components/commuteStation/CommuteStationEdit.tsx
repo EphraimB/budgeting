@@ -20,9 +20,11 @@ import { editCommuteStation } from "../../services/actions/commuteStation";
 import { CommuteStation } from "@/app/types/types";
 
 function CommuteStationEdit({
+  commuteSystemId,
   commuteStation,
   setCommuteStationModes,
 }: {
+  commuteSystemId: number;
   commuteStation: CommuteStation;
   setCommuteStationModes: (commuteStationModes: Record<number, string>) => void;
 }) {
@@ -40,6 +42,7 @@ function CommuteStationEdit({
   const { showAlert } = useAlert();
 
   const data = {
+    commuteSystemId,
     fromStation,
     toStation,
     tripDuration,

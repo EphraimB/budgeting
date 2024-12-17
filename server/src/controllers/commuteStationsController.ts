@@ -168,7 +168,7 @@ export const updateStation = async (
                 UPDATE stations
                     SET commute_system_id = $1,
                     from_station = $2,
-                    to_station = $3
+                    to_station = $3,
                     trip_duration = $4
                     WHERE id = $5
                     RETURNING *
