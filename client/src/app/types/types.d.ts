@@ -219,6 +219,8 @@ export interface FareDetail {
   fare: number;
   timeslots: Timeslot[];
   alternateFareDetailId: number | null;
+  duration: number | null;
+  dayStart: number | null;
   dateCreated: string;
   dateModified: string;
 }

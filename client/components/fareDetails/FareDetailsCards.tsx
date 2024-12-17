@@ -8,6 +8,7 @@ import { Box, Card, Fab, Stack } from "@mui/material";
 import FareDetailView from "./FareDetailView";
 import NewFareDetailForm from "./NewFareDetailForm";
 import FareDetailDelete from "./FareDetailDelete";
+import FareDetailEdit from "./FareDetailEdit";
 
 function FareDetailsCards({
   commuteSystemId,
@@ -46,11 +47,13 @@ function FareDetailsCards({
                   setFareDetailModes={setFareDetailModes}
                 />
               ) : fareDetailModes[fareDetail.id] === "edit" ? (
-                // <FareDetailEdit
-                //   fareDetail={fareDetail}
-                //   setFareDetailModes={setFareDetailModes}
-                // />
-                <></>
+                <FareDetailEdit
+                  commuteSystemId={commuteSystemId}
+                  commuteStationId={commuteStationId}
+                  fareDetails={fareDetails}
+                  fareDetail={fareDetail}
+                  setFareDetailModes={setFareDetailModes}
+                />
               ) : (
                 <FareDetailView
                   fareDetail={fareDetail}
