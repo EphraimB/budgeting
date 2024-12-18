@@ -244,9 +244,9 @@ function NewFareDetailForm({
                 Alternate fare
               </InputLabel>
               <Select
-                labelId="select-alternate-fare-label"
+                labelId="select-alternate-fare-duration-label" // Ensure this matches InputLabel's id
                 id="select-alternate-fare"
-                value={alternateFareDetailId}
+                value={(alternateFareDetailId as unknown as string) ?? 0}
                 label="Alternate fare"
                 onChange={(e: SelectChangeEvent) =>
                   setAlternateFareDetailId(e.target.value)
