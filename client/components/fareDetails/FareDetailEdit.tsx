@@ -252,7 +252,7 @@ function FareDetailEdit({
                 Alternate fare
               </InputLabel>
               <Select
-                labelId="select-alternate-fare-label"
+                labelId="select-alternate-fare-duration-label" // Ensure this matches InputLabel's id
                 id="select-alternate-fare"
                 value={(alternateFareDetailId as unknown as string) ?? 0}
                 label="Alternate fare"
@@ -270,6 +270,7 @@ function FareDetailEdit({
                   ))}
               </Select>
             </FormControl>
+
             <br />
             <br />
             <Button variant="contained" onClick={handleSubmit}>
