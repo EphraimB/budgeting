@@ -34,9 +34,14 @@ function CommuteSystemEdit({
 }) {
   const [name, setName] = useState(commuteSystem.name);
   const [fareCapEnabled, setFareCapEnabled] = useState(!!commuteSystem.fareCap);
-  const [fareCap, setFareCap] = useState<number | null>(commuteSystem.fareCap);
-  const [fareCapDuration, setFareCapDuration] = useState<number | null>(
-    commuteSystem.fareCapDuration
+  const [fareCap, setFareCap] = useState<string | null>(
+    commuteSystem.fareCap ? commuteSystem.fareCap.toString() : null
+  );
+  const [fareCapDuration, setFareCapDuration] = useState<string>(
+    commuteSystem.fareCapDuration !== null &&
+      commuteSystem.fareCapDuration !== undefined
+      ? commuteSystem.fareCapDuration.toString()
+      : ""
   );
 
   const [nameError, setNameError] = useState("");
@@ -46,8 +51,8 @@ function CommuteSystemEdit({
 
   const data = {
     name,
-    fareCap,
-    fareCapDuration,
+    fareCap: fareCap && fareCapEnabled ? parseFloat(fareCap) : null,
+    fareCapDuration: fareCapDuration ? parseInt(fareCapDuration) : null,
   };
 
   const validateName = () => {
@@ -106,14 +111,14 @@ function CommuteSystemEdit({
     setFareCapEnabled(e.target.checked);
 
     if (e.target.checked) {
-      setFareCap(0);
+      setFareCap("0");
     } else {
       setFareCap(null);
     }
   };
 
   const handleChangeFareCapDuration = (e: SelectChangeEvent) => {
-    setFareCapDuration(parseInt(e.target.value));
+    setFareCapDuration(e.target.value);
   };
 
   return (
@@ -174,7 +179,7 @@ function CommuteSystemEdit({
                   label="Fare cap"
                   variant="standard"
                   value={fareCap}
-                  onChange={(e) => setFareCap(parseInt(e.target.value))}
+                  onChange={(e) => setFareCap(e.target.value)}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -193,18 +198,14 @@ function CommuteSystemEdit({
                   <Select
                     labelId="select-fare-cap-duration-label"
                     id="select-fare-cap-duration"
-                    value={
-                      fareCapDuration
-                        ? (fareCapDuration as unknown as string)
-                        : "0"
-                    }
+                    value={fareCapDuration}
                     label="Fare cap duration"
                     onChange={handleChangeFareCapDuration}
                   >
-                    <MenuItem value={0}>Daily</MenuItem>
-                    <MenuItem value={1}>Weekly</MenuItem>
-                    <MenuItem value={2}>Monthly</MenuItem>
-                    <MenuItem value={3}>Yearly</MenuItem>
+                    <MenuItem value={"0"}>Daily</MenuItem>
+                    <MenuItem value={"1"}>Weekly</MenuItem>
+                    <MenuItem value={"2"}>Monthly</MenuItem>
+                    <MenuItem value={"3"}>Yearly</MenuItem>
                   </Select>
                 </FormControl>
               </>
