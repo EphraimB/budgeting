@@ -11,8 +11,6 @@ export default function StatusBar({ title }: { title: string }) {
   // Regex to match "/[accountId]/setup" exactly with nothing after it
   const isOnRootSetupPage = /^\/[^/]+\/setup\/?$/.test(pathname);
 
-  console.log(isOnRootSetupPage);
-
   const goBack = () => {
     const parentPath = pathname.split("/").slice(0, -1).join("/"); // Remove the last segment
     router.push(parentPath); // Navigate to the parent path

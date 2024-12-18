@@ -116,6 +116,7 @@ function NewCommuteSystemForm({
         maxWidth: "18rem",
         position: "relative",
       }}
+      data-testid="new-commute-system-form"
     >
       <IconButton
         aria-label="close"

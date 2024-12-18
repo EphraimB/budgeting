@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CommutePanels from "../../../components/commute/CommutePanels";
 import { FullCommuteSchedule } from "@/app/types/types";
-import userEvent from "@testing-library/user-event";
 
 // Mock next/navigation hook
 jest.mock("next/navigation", () => ({
