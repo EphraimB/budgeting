@@ -70,7 +70,11 @@ function FareDetailsCards({
       </Grid>
       <br />
       <Box sx={{ position: "fixed", bottom: 16, right: 16 }}>
-        <Fab color="primary" onClick={() => setShowFareDetailForm(true)}>
+        <Fab
+          color="primary"
+          onClick={() => setShowFareDetailForm(true)}
+          data-testid="add-fab"
+        >
           <AddIcon />
         </Fab>
       </Box>
