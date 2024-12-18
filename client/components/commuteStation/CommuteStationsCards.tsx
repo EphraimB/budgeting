@@ -61,7 +61,11 @@ function CommuteStationCards({
       </Grid>
       <br />
       <Box sx={{ position: "fixed", bottom: 16, right: 16 }}>
-        <Fab color="primary" onClick={() => setShowCommuteStationForm(true)}>
+        <Fab
+          color="primary"
+          onClick={() => setShowCommuteStationForm(true)}
+          data-testid="add-fab"
+        >
           <AddIcon />
         </Fab>
       </Box>
