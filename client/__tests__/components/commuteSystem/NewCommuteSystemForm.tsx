@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import CommuteSystemEdit from "../../../components/commuteSystem/CommuteSystemEdit";
+import NewCommuteSystemForm from "../../../components/commuteSystem/NewCommuteSystemForm";
 import userEvent from "@testing-library/user-event";
 
 jest.mock("next/navigation", () => ({
@@ -18,36 +18,25 @@ jest.mock("../../../context/FeedbackContext", () => ({
 }));
 
 describe("CommuteSystemEdit Component", () => {
-  const mockSetCommuteSystemModes = jest.fn();
-
-  const commuteSystem = {
-    id: 1,
-    name: "Test System",
-    fareCap: 100,
-    fareCapDuration: 0, // Daily
-    dateCreated: "2020-01-01",
-    dateModified: "2020-01-01",
-  };
+  const setShowCommuteSystemForm = jest.fn();
 
   it("renders correctly with commute system details", () => {
     render(
-      <CommuteSystemEdit
-        commuteSystem={commuteSystem}
-        setCommuteSystemModes={mockSetCommuteSystemModes}
+      <NewCommuteSystemForm
+        setShowCommuteSystemForm={setShowCommuteSystemForm}
       />
     );
 
     expect(
-      screen.getByText(`Edit Commute System - Step 1 of 2`)
+      screen.getByText(`New Commute System - Step 1 of 2`)
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("Name")).toHaveValue("Test System");
+    expect(screen.getByLabelText("Name")).toHaveValue("");
   });
 
   it("updates the fare cap and duration fields correctly", async () => {
     render(
-      <CommuteSystemEdit
-        commuteSystem={commuteSystem}
-        setCommuteSystemModes={mockSetCommuteSystemModes}
+      <NewCommuteSystemForm
+        setShowCommuteSystemForm={setShowCommuteSystemForm}
       />
     );
 
@@ -58,6 +47,7 @@ describe("CommuteSystemEdit Component", () => {
     // Check the checkbox and update fare cap
     const fareCapCheckbox = screen.getByLabelText("Fare cap enabled");
 
+    await userEvent.click(fareCapCheckbox);
     expect(fareCapCheckbox).toBeChecked();
 
     const fareCapField = screen.getByLabelText("Fare cap");

@@ -31,7 +31,7 @@ function NewCommuteSystemForm({
 }) {
   const [name, setName] = useState("");
   const [fareCapEnabled, setFareCapEnabled] = useState(false);
-  const [fareCap, setFareCap] = useState<number | null>(null);
+  const [fareCap, setFareCap] = useState<string | null>(null);
   const [fareCapDuration, setFareCapDuration] = useState<string | null>(null);
 
   const [nameError, setNameError] = useState("");
@@ -41,7 +41,7 @@ function NewCommuteSystemForm({
 
   const data = {
     name,
-    fareCap,
+    fareCap: fareCap ? parseFloat(fareCap) : null,
     fareCapDuration: fareCapDuration ? parseInt(fareCapDuration) : null,
   };
 
@@ -100,7 +100,7 @@ function NewCommuteSystemForm({
     setFareCapEnabled(e.target.checked);
 
     if (e.target.checked) {
-      setFareCap(0);
+      setFareCap("0");
     } else {
       setFareCap(null);
     }
@@ -169,7 +169,7 @@ function NewCommuteSystemForm({
                   label="Fare cap"
                   variant="standard"
                   value={fareCap}
-                  onChange={(e) => setFareCap(parseInt(e.target.value))}
+                  onChange={(e) => setFareCap(e.target.value)}
                   slotProps={{
                     input: {
                       startAdornment: (
