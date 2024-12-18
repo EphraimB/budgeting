@@ -3,7 +3,7 @@ import "@testing-library/jest-dom";
 import FareDetailsCards from "../../../components/fareDetails/FareDetailsCards";
 import { FareDetail } from "@/app/types/types";
 
-describe("CommuteSystemCards Component", () => {
+describe("FareDetailsCards Component", () => {
   const fareDetails: FareDetail[] = [
     {
       id: 1,

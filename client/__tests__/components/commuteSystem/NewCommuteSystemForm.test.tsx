@@ -17,7 +17,7 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
-describe("CommuteSystemEdit Component", () => {
+describe("NewCommuteSystemForm Component", () => {
   const setShowCommuteSystemForm = jest.fn();
 
   it("renders correctly with commute system details", () => {
