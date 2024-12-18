@@ -23,10 +23,7 @@ import {
 } from "@mui/material";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { FareDetail } from "@/app/types/types";
-import {
-  addFareDetail,
-  editFareDetail,
-} from "../../services/actions/fareDetail";
+import { editFareDetail } from "../../services/actions/fareDetail";
 
 function FareDetailEdit({
   setFareDetailModes,
@@ -44,7 +41,7 @@ function FareDetailEdit({
   fareDetail: FareDetail;
 }) {
   const [name, setName] = useState(fareDetail.name);
-  const [fare, setFare] = useState(fareDetail.fare);
+  const [fare, setFare] = useState(fareDetail.fare.toString());
   const [timedPassEnabled, setTimedPassEnabled] = useState(
     !!fareDetail.duration
   );
@@ -65,7 +62,7 @@ function FareDetailEdit({
     commuteSystemId,
     stationId: commuteStationId,
     name,
-    fare,
+    fare: parseFloat(fare),
     timeslots: [],
     duration,
     dayStart,
@@ -191,7 +188,7 @@ function FareDetailEdit({
               label="Fare"
               variant="standard"
               value={fare}
-              onChange={(e) => setFare(parseInt(e.target.value))}
+              onChange={(e) => setFare(e.target.value)}
               slotProps={{
                 input: {
                   startAdornment: (

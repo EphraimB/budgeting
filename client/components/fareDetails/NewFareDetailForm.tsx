@@ -56,7 +56,7 @@ function NewFareDetailForm({
     commuteSystemId,
     stationId: commuteStationId,
     name,
-    fare: parseInt(fare),
+    fare: parseFloat(fare),
     timeslots: [],
     duration,
     dayStart,
@@ -182,7 +182,7 @@ function NewFareDetailForm({
             <TextField
               label="Fare"
               variant="standard"
-              value={parseInt(fare)}
+              value={fare}
               onChange={(e) => setFare(e.target.value)}
               slotProps={{
                 input: {
