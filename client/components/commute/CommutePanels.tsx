@@ -1,15 +1,18 @@
 "use client";
 
-import { FullCommuteSchedule } from "@/app/types/types";
+import { FareDetail, FullCommuteSchedule } from "@/app/types/types";
 import { Stack, Box, Divider, Typography, Chip, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { usePathname } from "next/navigation";
 import Grid from "@mui/material/Grid2";
 import Link from "next/link";
+import GeneratedTickets from "./GeneratedTickets";
 
 export default function CommutePanels({
+  fares,
   commuteSchedule,
 }: {
+  fares: FareDetail[];
   commuteSchedule: FullCommuteSchedule[];
 }) {
   const pathname = usePathname();
@@ -25,25 +28,6 @@ export default function CommutePanels({
     "Friday",
     "Saturday",
   ];
-
-  const startTime = 8; // 8:00 AM
-  const endTime = 18; // 6:00 PM
-  const interval = 30; // 30 minutes
-
-  const generateTimeSlots = () => {
-    const timeSlots = [];
-    for (let i = startTime; i < endTime; i += interval / 60) {
-      const hour = Math.floor(i);
-      const minute = (i % 1) * 60;
-      const time = `${hour.toString().padStart(2, "0")}:${minute
-        .toString()
-        .padStart(2, "0")}`;
-      timeSlots.push(time);
-    }
-    return timeSlots;
-  };
-
-  const timeslots = generateTimeSlots();
 
   return (
     <>
@@ -88,17 +72,12 @@ export default function CommutePanels({
             justifyContent: "center",
           }}
         >
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Stack direction="column" spacing={2}>
             <Link href={`${pathname}/setup`}>
               <Button variant="contained">Setup</Button>
             </Link>
-          </Box>
-          {/* Add spacing here */}
-          <Box sx={{ mt: 4 }}>
-            {" "}
-            {/* mt: 4 adds margin top */}
-            <Typography>Tickets will generate based on the setup</Typography>
-          </Box>
+            <GeneratedTickets fares={fares} />
+          </Stack>
         </Box>
 
         {/* Panel 2 */}
