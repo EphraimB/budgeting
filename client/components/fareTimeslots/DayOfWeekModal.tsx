@@ -169,7 +169,7 @@ function DayOfWeekModal({
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={onclose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       sx={{
