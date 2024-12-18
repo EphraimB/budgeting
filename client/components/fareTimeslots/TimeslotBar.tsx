@@ -4,6 +4,9 @@ import Tooltip from "@mui/material/Tooltip";
 import dayjs from "dayjs";
 import { Timeslot } from "@/app/types/types";
 import { createTheme } from "@mui/material/styles";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 function TimeslotBar({
   timeslot,
@@ -49,6 +52,7 @@ function TimeslotBar({
             timeToPercent(timeslot.endTime) - timeToPercent(timeslot.startTime)
           }%`,
         }}
+        data-testid="timeslot-box"
       />
     </Tooltip>
   );
