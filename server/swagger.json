@@ -4561,19 +4561,17 @@
                                             "format": "int64",
                                             "minimum": 1
                                         },
-                                        "commuteSystem": {
-                                            "type": "object",
-                                            "properties": {
-                                                "commuteSystemId": {
-                                                    "type": "integer",
-                                                    "format": "int64",
-                                                    "minimum": 1
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "Subway"
-                                                }
-                                            }
+                                        "fromStation": {
+                                            "type": "string",
+                                            "example": "23 St"
+                                        },
+                                        "toStation": {
+                                            "type": "string",
+                                            "example": "14 St"
+                                        },
+                                        "commuteSystemName": {
+                                            "type": "string",
+                                            "example": "OMNY"
                                         },
                                         "name": {
                                             "type": "string",

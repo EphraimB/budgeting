@@ -76,7 +76,7 @@ export default function CommutePanels({
             <Link href={`${pathname}/setup`}>
               <Button variant="contained">Setup</Button>
             </Link>
-            <GeneratedTickets fares={fares} />
+            <GeneratedTickets fares={fares} commuteSchedule={commuteSchedule} />
           </Stack>
         </Box>
 

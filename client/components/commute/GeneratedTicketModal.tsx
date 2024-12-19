@@ -1,4 +1,4 @@
-import { FareDetail } from "@/app/types/types";
+import { FareDetail, FullCommuteSchedule } from "@/app/types/types";
 import {
   Button,
   MenuItem,
@@ -19,10 +19,12 @@ dayjs.extend(isBetween);
 
 function GeneratedTicketModal({
   fare,
+  commuteSchedule,
   open,
   setOpen,
 }: {
   fare: FareDetail;
+  commuteSchedule: FullCommuteSchedule[];
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -90,18 +92,34 @@ function GeneratedTicketModal({
   };
 
   const handleAddToSchedule = async () => {
+    // Check if the selected schedule is a duplicate
+    const isDuplicate = commuteSchedule.some(
+      (scheduleGroup) =>
+        scheduleGroup.dayOfWeek === dayOfWeek &&
+        scheduleGroup.commuteSchedules.some(
+          (schedule) =>
+            schedule.pass === fare.name && // Match the pass (e.g., "OMNY Reduced Fare")
+            schedule.startTime === (startTime || "00:00:00")
+        )
+    );
+
+    if (isDuplicate) {
+      showAlert("This schedule already exists.", "error");
+      return;
+    }
+
     // Check if the selected time is valid
     if (!isValidTime(startTime || "00:00:00")) {
       showAlert("The selected time is outside the valid fare times", "error");
       return;
     }
 
-    // Submit data
     try {
+      // Submit the new schedule
       await addCommuteSchedule(data);
       showSnackbar("Successfully added to schedule");
     } catch (error) {
-      console.log(error);
+      console.error("Error adding to schedule:", error);
       showAlert("Error adding to schedule", "error");
     }
 

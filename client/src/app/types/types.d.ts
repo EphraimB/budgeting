@@ -212,8 +212,8 @@ export interface Timeslot {
 export interface FareDetail {
   id: number;
   accountId: number;
-  commuteSystemId: number;
-  stationId: number;
+  fromStation: string;
+  toStation: string;
   commuteSystemName: string;
   name: string;
   fare: number;

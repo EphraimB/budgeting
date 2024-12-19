@@ -1,9 +1,5 @@
 import { type Request, type Response } from 'express';
-import {
-    compareTimeslots,
-    handleError,
-    toCamelCase,
-} from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { type Timeslots } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
@@ -30,8 +26,9 @@ export const getFareDetails = async (
                 SELECT
                     fare_details.account_id,
                     fare_details.id,
-                    stations.id AS station_id,
-                    commute_systems.id AS commute_system_id, commute_systems.name AS commute_system_name,
+                    stations.from_station,
+                    stations.to_station,
+                    commute_systems.name AS commute_system_name,
                     fare_details.name, 
                     fare, 
                     COALESCE(
@@ -43,8 +40,10 @@ export const getFareDetails = async (
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
-                    ) AS timeslots, 
-                    alternate_fare_details_id, 
+                    ) AS timeslots,
+                    fare_details.duration,
+                    fare_details.day_start,
+                    alternate_fare_details_id,
                     fare_details.date_created, 
                     fare_details.date_modified
                 FROM 
@@ -65,8 +64,9 @@ export const getFareDetails = async (
                 SELECT
                     fare_details.account_id,
                     fare_details.id,
-                    stations.id AS station_id,
-                    commute_systems.id AS commute_system_id, commute_systems.name AS commute_system_name,
+                    stations.from_station,
+                    stations.to_station,
+                    commute_systems.name AS commute_system_name,
                     fare_details.name, 
                     fare, 
                     COALESCE(
@@ -78,7 +78,9 @@ export const getFareDetails = async (
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
-                    ) AS timeslots, 
+                    ) AS timeslots,
+                    fare_details.duration,
+                    fare_details.day_start,
                     alternate_fare_details_id, 
                     fare_details.date_created, 
                     fare_details.date_modified
@@ -132,8 +134,9 @@ export const getFareDetailsById = async (
                 SELECT
                     fare_details.account_id,
                     fare_details.id,
-                    stations.id AS station_id,
-                    commute_systems.id AS commute_system_id, commute_systems.name AS commute_system_name,
+                    stations.from_station,
+                    stations.to_station,
+                    commute_systems.name AS commute_system_name,
                     fare_details.name, 
                     fare, 
                     COALESCE(
@@ -145,7 +148,9 @@ export const getFareDetailsById = async (
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
-                    ) AS timeslots, 
+                    ) AS timeslots,
+                    fare_details.duration,
+                    fare_details.day_start,
                     alternate_fare_details_id, 
                     fare_details.date_created, 
                     fare_details.date_modified
@@ -166,8 +171,9 @@ export const getFareDetailsById = async (
                 SELECT
                     fare_details.account_id,
                     fare_details.id,
-                    stations.id AS station_id,
-                    commute_systems.id AS commute_system_id, commute_systems.name AS commute_system_name,
+                    stations.from_station,
+                    stations.to_station,
+                    commute_systems.name AS commute_system_name,
                     fare_details.name, 
                     fare, 
                     COALESCE(
@@ -180,6 +186,8 @@ export const getFareDetailsById = async (
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
                     ) AS timeslots, 
+                    fare_details.duration,
+                    fare_details.day_start,
                     alternate_fare_details_id, 
                     fare_details.date_created, 
                     fare_details.date_modified
@@ -451,7 +459,7 @@ export const updateFareDetail = async (
             ],
         );
 
-        console.log(updateFareDetailResults)
+        console.log(updateFareDetailResults);
 
         await client.query('COMMIT;');
 
