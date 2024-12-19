@@ -1,14 +1,10 @@
 import { FareDetail } from "@/app/types/types";
 import {
   Button,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardHeader,
   MenuItem,
   Modal,
   Select,
-  TextField,
+  Stack,
   Typography,
 } from "@mui/material";
 import { addCommuteSchedule } from "../../services/actions/commuteSchedule";
@@ -28,7 +24,7 @@ function GeneratedTicketModal({
 }: {
   fare: FareDetail;
   open: boolean;
-  setOpen: (isOpen: boolean) => void;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
@@ -108,6 +104,8 @@ function GeneratedTicketModal({
       console.log(error);
       showAlert("Error adding to schedule", "error");
     }
+
+    setOpen(false);
   };
 
   const handleClose = () => {
@@ -126,59 +124,58 @@ function GeneratedTicketModal({
         justifyContent: "center",
       }}
     >
-      <Card sx={{ maxWidth: "18rem", position: "relative" }}>
-        <CardHeader title={`${fare.commuteSystemName} ${fare.name}`} />
-        <CardContent>
-          <Typography component="p" variant="body2">
-            ${fare.fare} fare
-          </Typography>
-          <Select
-            label="Day of Week"
-            value={dayOfWeek}
-            onChange={(e) => setDayOfWeek(Number(e.target.value))}
-            fullWidth
-          >
-            {[
-              "Sunday",
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-            ].map((day, index) => (
-              <MenuItem key={index} value={index}>
-                {day}
-              </MenuItem>
-            ))}
-          </Select>
+      <Stack
+        direction="column"
+        spacing={2}
+        sx={{ width: "50%", bgcolor: "background.paper", p: 4 }}
+      >
+        <Typography variant="h6" component="h2" gutterBottom>
+          {fare.commuteSystemName} {fare.name}
+        </Typography>
+        <Typography component="p" variant="body2">
+          ${fare.fare} fare
+        </Typography>
+        <Select
+          label="Day of Week"
+          value={dayOfWeek}
+          onChange={(e) => setDayOfWeek(Number(e.target.value))}
+          fullWidth
+        >
+          {[
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ].map((day, index) => (
+            <MenuItem key={index} value={index}>
+              {day}
+            </MenuItem>
+          ))}
+        </Select>
 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TimePicker
-              label="Start Time"
-              value={dayjs(startTime, "HH:mm:ss")}
-              onChange={(e) => setStartTime(e ? e.format("HH:mm:ss") : null)}
-              disabled={!validTimeslots.length} // Disable if no valid timeslots for the selected day
-              minTime={minTime}
-              maxTime={maxTime}
-            />
-          </LocalizationProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <TimePicker
+            label="Start Time"
+            value={dayjs(startTime, "HH:mm:ss")}
+            onChange={(e) => setStartTime(e ? e.format("HH:mm:ss") : null)}
+            disabled={!validTimeslots.length} // Disable if no valid timeslots for the selected day
+            minTime={minTime}
+            maxTime={maxTime}
+          />
+        </LocalizationProvider>
 
-          {validTimeslots.length === 0 && (
-            <div style={{ color: "red", fontSize: "0.875rem" }}>
-              No valid times available for this day.
-            </div>
-          )}
-        </CardContent>
-        <CardActionArea>
-          <Button
-            onClick={handleAddToSchedule}
-            disabled={!validTimeslots.length}
-          >
-            Add to schedule
-          </Button>
-        </CardActionArea>
-      </Card>
+        {validTimeslots.length === 0 && (
+          <div style={{ color: "red", fontSize: "0.875rem" }}>
+            No valid times available for this day.
+          </div>
+        )}
+        <Button onClick={handleAddToSchedule} disabled={!validTimeslots.length}>
+          Add to schedule
+        </Button>
+      </Stack>
     </Modal>
   );
 }
