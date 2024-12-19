@@ -21,7 +21,7 @@ function GeneratedTicketView({
     <Paper sx={{ cursor: "pointer" }}>
       <Stack direction="column" spacing={2}>
         <Typography component="h6" variant="body1">
-          {fare.commuteSystemName}
+          {fare.commuteSystemName} {fare.name}
         </Typography>
         <Stack
           direction="column"

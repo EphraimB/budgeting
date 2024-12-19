@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import { FareDetail } from "@/app/types/types";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
-import { Box } from "@mui/material";
+import { CardHeader, Typography } from "@mui/material";
 import FareDetailActionsMenu from "./FareDetailActionsMenu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -61,10 +61,12 @@ function FareDetailView({
         style={{ textDecoration: "none", color: "inherit" }}
       >
         <CardContent>
-          <Box>
-            <strong>{fareDetail.name}</strong>
-          </Box>
-          <Box>${fareDetail.fare}</Box>
+          <Typography component="p" variant="body2">
+            {fareDetail.name}
+          </Typography>
+          <Typography component="p" variant="body2">
+            ${fareDetail.fare.toFixed(2)}
+          </Typography>
         </CardContent>
       </Link>
     </>
