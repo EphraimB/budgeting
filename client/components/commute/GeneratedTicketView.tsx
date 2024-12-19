@@ -1,5 +1,5 @@
 import { FareDetail, FullCommuteSchedule } from "@/app/types/types";
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import GeneratedTicketModal from "./GeneratedTicketModal";
 import { ArrowDownward } from "@mui/icons-material";
@@ -19,15 +19,15 @@ function GeneratedTicketView({
 
   return (
     <Paper sx={{ cursor: "pointer" }}>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="column" spacing={2}>
         <Typography component="h6" variant="body1">
           {fare.commuteSystemName}
         </Typography>
-        <Box
+        <Stack
+          direction="column"
           sx={{
             p: 2,
             border: "1px solid black",
-            display: "flex",
             justifyContent: "center",
           }}
         >
@@ -38,10 +38,10 @@ function GeneratedTicketView({
           <Typography component="p" variant="body2">
             {fare.toStation}
           </Typography>
-        </Box>
+        </Stack>
       </Stack>
       <Typography component="p" variant="body2">
-        ${fare.fare} fare
+        ${fare.fare.toFixed(2)} fare
       </Typography>
       <Button onClick={openModal}>Add to schedule</Button>
       <GeneratedTicketModal

@@ -1,11 +1,10 @@
 "use client";
 
 import { FareDetail, FullCommuteSchedule } from "@/app/types/types";
-import { Stack, Box, Divider, Typography, Chip, Button } from "@mui/material";
+import { Stack, Box, Divider, Typography, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Grid from "@mui/material/Grid2";
-import Link from "next/link";
 import GeneratedTickets from "./GeneratedTickets";
 
 export default function CommutePanels({
@@ -15,6 +14,7 @@ export default function CommutePanels({
   fares: FareDetail[];
   commuteSchedule: FullCommuteSchedule[];
 }) {
+  const router = useRouter();
   const pathname = usePathname();
 
   const isMobile = useMediaQuery("(max-width:600px)", { noSsr: true });
@@ -73,9 +73,12 @@ export default function CommutePanels({
           }}
         >
           <Stack direction="column" spacing={2}>
-            <Link href={`${pathname}/setup`}>
-              <Button variant="contained">Setup</Button>
-            </Link>
+            <Button
+              variant="contained"
+              onClick={() => router.push(`${pathname}/setup`)}
+            >
+              Setup
+            </Button>
             <GeneratedTickets fares={fares} commuteSchedule={commuteSchedule} />
           </Stack>
         </Box>

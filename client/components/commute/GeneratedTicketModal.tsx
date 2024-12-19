@@ -151,7 +151,7 @@ function GeneratedTicketModal({
           {fare.commuteSystemName} {fare.name}
         </Typography>
         <Typography component="p" variant="body2">
-          ${fare.fare} fare
+          ${fare.fare.toFixed(2)} fare
         </Typography>
         <Select
           label="Day of Week"
