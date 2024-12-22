@@ -4569,6 +4569,10 @@
                                             "type": "string",
                                             "example": "14 St"
                                         },
+                                        "tripDuration": {
+                                            "type": "integer",
+                                            "example": 2
+                                        },
                                         "commuteSystemName": {
                                             "type": "string",
                                             "example": "OMNY"
@@ -4783,7 +4787,15 @@
                                             "items": {
                                                 "type": "object",
                                                 "properties": {
-                                                    "type": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "minimum": 1
+                                                    },
+                                                    "fareId": {
+                                                        "type": "integer",
+                                                        "minimum": 1
+                                                    },
+                                                    "pass": {
                                                         "type": "string",
                                                         "example": "LIRR Monthly"
                                                     },
@@ -4795,7 +4807,7 @@
                                                         "type": "string",
                                                         "example": "10:00:00"
                                                     },
-                                                    "fareAmount": {
+                                                    "fare": {
                                                         "type": "number",
                                                         "format": "double",
                                                         "example": 10.0

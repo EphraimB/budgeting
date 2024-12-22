@@ -214,6 +214,7 @@ export interface FareDetail {
   accountId: number;
   fromStation: string;
   toStation: string;
+  tripDuration: number;
   commuteSystemName: string;
   name: string;
   fare: number;
@@ -232,6 +233,7 @@ export interface FullCommuteSchedule {
 
 export interface CommuteSchedule {
   id: number;
+  fareId: number;
   startTime: string;
   endTime: string;
   fare: number;

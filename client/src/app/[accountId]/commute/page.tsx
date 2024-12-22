@@ -1,8 +1,4 @@
-import {
-  CommuteSchedule,
-  FareDetail,
-  FullCommuteSchedule,
-} from "@/app/types/types";
+import { FareDetail, FullCommuteSchedule } from "@/app/types/types";
 import CommutePanels from "../../../../components/commute/CommutePanels";
 
 async function getFares() {

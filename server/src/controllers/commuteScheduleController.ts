@@ -31,6 +31,7 @@ export const getCommuteSchedule = async (
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
                                 'id', cs.id,
+                                'fareId', fd.id,
                                 'pass', concat(csy.name, ' ', fd.name),
                                 'startTime', cs.start_time,
                                 'endTime', cs.start_time + interval '1 minute' * s.trip_duration,
@@ -86,6 +87,7 @@ export const getCommuteScheduleById = async (
                         JSON_AGG(
                         JSON_BUILD_OBJECT(
                             'id', cs.id,
+                            'fareId', fd.id,
                             'pass', concat(csy.name, ' ', fd.name),
                             'startTime', cs.start_time,
                             'endTime', cs.start_time + interval '1 minute' * s.trip_duration,
