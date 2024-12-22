@@ -46,7 +46,7 @@ describe("CommuteSystemView Component", () => {
     );
 
     expect(
-      screen.getByText("There's a fare cap of $50 per week for this system")
+      screen.getByText("There's a fare cap of $50.00 per week for this system")
     ).toBeInTheDocument();
   });
 

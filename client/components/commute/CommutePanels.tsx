@@ -109,7 +109,7 @@ export default function CommutePanels({
                           >
                             <Typography variant="body1">
                               {commute.pass} - {commute.startTime} to{" "}
-                              {commute.endTime} (${commute.fare})
+                              {commute.endTime} (${commute.fare.toFixed(2)})
                             </Typography>
                           </Box>
                         </Grid>
