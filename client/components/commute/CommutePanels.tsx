@@ -6,6 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { usePathname, useRouter } from "next/navigation";
 import Grid from "@mui/material/Grid2";
 import GeneratedTickets from "./GeneratedTickets";
+import CommuteScheduleView from "../commuteSchedule/CommuteScheduleView";
 
 export default function CommutePanels({
   fares,
@@ -101,20 +102,7 @@ export default function CommutePanels({
                 {commuteSchedule
                   .filter((schedule) => schedule.dayOfWeek === index)
                   .map((schedule) => (
-                    <Grid key={schedule.dayOfWeek} size={{ xs: 12 }}>
-                      {schedule.commuteSchedules.map((commute) => (
-                        <Grid key={commute.id} size={{ xs: 12 }}>
-                          <Box
-                            sx={{ backgroundColor: "lightgray", padding: 1 }}
-                          >
-                            <Typography variant="body1">
-                              {commute.pass} - {commute.startTime} to{" "}
-                              {commute.endTime} (${commute.fare.toFixed(2)})
-                            </Typography>
-                          </Box>
-                        </Grid>
-                      ))}
-                    </Grid>
+                    <CommuteScheduleView schedule={schedule} />
                   ))}
               </Grid>
             ))}
