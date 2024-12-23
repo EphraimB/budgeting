@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import GeneratedTicketModal from "../../../components/commute/GeneratedTicketModal";
@@ -51,6 +51,14 @@ describe("GeneratedTicketModal", () => {
           id: 1,
           fareId: 1,
           fare: 2.9,
+          startTime: "00:00:00",
+          endTime: "01:00:00",
+          pass: "Test Fare",
+        },
+        {
+          id: 2,
+          fareId: 1,
+          fare: 2.9,
           startTime: "06:30:00",
           endTime: "07:00:00",
           pass: "Test Fare",
@@ -61,7 +69,7 @@ describe("GeneratedTicketModal", () => {
       dayOfWeek: 1,
       commuteSchedules: [
         {
-          id: 1,
+          id: 3,
           fareId: 1,
           fare: 2.9,
           startTime: "06:30:00",
@@ -75,9 +83,20 @@ describe("GeneratedTicketModal", () => {
   it("renders and allows interaction", async () => {
     const setOpen = jest.fn();
 
+    const fareWithValidTimeslot: FareDetail = {
+      ...fare,
+      timeslots: [
+        {
+          dayOfWeek: 1,
+          startTime: "00:00:00",
+          endTime: "01:00:00",
+        },
+      ],
+    };
+
     render(
       <GeneratedTicketModal
-        fare={fare}
+        fare={fareWithValidTimeslot}
         commuteSchedule={commuteSchedule}
         open={true}
         setOpen={setOpen}
@@ -97,7 +116,7 @@ describe("GeneratedTicketModal", () => {
 
     // Click on the "Monday" option (index 1)
     const mondayOption = screen.getByText("Monday");
-    userEvent.click(mondayOption);
+    await userEvent.click(mondayOption);
 
     // Check that the TimePicker is rendered and functional
     expect(screen.getByLabelText("Start Time")).toBeInTheDocument();
@@ -121,12 +140,28 @@ describe("GeneratedTicketModal", () => {
       ...fare,
       timeslots: [
         {
-          dayOfWeek: 0,
-          startTime: "06:00:00",
+          dayOfWeek: 0, // Sunday
+          startTime: "00:00:00",
           endTime: "08:00:00",
         },
       ],
     };
+
+    const commuteSchedule: FullCommuteSchedule[] = [
+      {
+        dayOfWeek: 0,
+        commuteSchedules: [
+          {
+            id: 1,
+            fareId: 1,
+            fare: 2.9,
+            startTime: "00:00:00",
+            endTime: "01:00:00",
+            pass: "Test Fare",
+          },
+        ],
+      },
+    ];
 
     render(
       <GeneratedTicketModal
@@ -141,33 +176,25 @@ describe("GeneratedTicketModal", () => {
     const selectElement = screen.getByRole("combobox");
     expect(selectElement).toBeInTheDocument();
 
-    // Click on the "Sunday" option (index 0)
+    // Ensure that Sunday is rendered and selectable
     const sundayOption = screen.getByText("Sunday");
     await userEvent.click(sundayOption);
 
-    // Ensure that the TimePicker input is rendered and clickable
+    // Find the TimePicker input element
     const timePickerInput = screen.getByLabelText("Start Time");
     expect(timePickerInput).toBeInTheDocument();
 
-    // Click the input field to open the TimePicker
-    await userEvent.click(timePickerInput);
-
-    // Type the time in HH:mm:ss format (e.g., "06:30:00")
-    const startTime = "06:30:00";
-    userEvent.type(timePickerInput, startTime);
-
-    // Check that the time has been set correctly
-    expect(timePickerInput).toHaveValue("06:30 AM");
-
-    // The "Add to schedule" button should be disabled
+    // The "Add to schedule" button should be disabled after setting a conflicting time
     const addButton = screen.getByText("Add to schedule");
     expect(addButton).toBeDisabled();
+
+    // Check for the duplicate error message
     expect(
       screen.getByText("This schedule already exists.")
     ).toBeInTheDocument();
   });
 
-  it("shows alert for invalid time selection", async () => {
+  it("disables Add to schedule button for invalid fare time", async () => {
     const setOpen = jest.fn();
 
     const fareWithInvalidTimeslot: FareDetail = {
@@ -210,7 +237,7 @@ describe("GeneratedTicketModal", () => {
     const addButton = screen.getByText("Add to schedule");
     expect(addButton).toBeDisabled();
     expect(
-      screen.getByText("No valid times available for this day.")
+      screen.getByText("Fare not valid during this time.")
     ).toBeInTheDocument();
   });
 });

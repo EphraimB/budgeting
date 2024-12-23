@@ -11,7 +11,7 @@ import { addCommuteSchedule } from "../../services/actions/commuteSchedule";
 import { useAlert, useSnackbar } from "../../context/FeedbackContext";
 import { useState, useEffect } from "react";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import isBetween from "dayjs/plugin/isBetween";
 
@@ -177,7 +177,7 @@ function GeneratedTicketModal({
         )}
         <Button
           onClick={handleAddToSchedule}
-          disabled={!validTimeslots.length || isDuplicate}
+          disabled={validTimeslots.length === 0 || isDuplicate}
         >
           Add to schedule
         </Button>
