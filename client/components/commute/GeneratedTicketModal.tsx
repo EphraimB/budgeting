@@ -34,105 +34,38 @@ function GeneratedTicketModal({
   const [dayOfWeek, setDayOfWeek] = useState<number>(0);
   const [startTime, setStartTime] = useState<string | null>("00:00:00");
   const [validTimeslots, setValidTimeslots] = useState<Timeslot[]>([]);
-  const [minTime, setMinTime] = useState<Dayjs | undefined>(undefined);
-  const [maxTime, setMaxTime] = useState<Dayjs | undefined>(undefined);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
 
-  // Filter the valid timeslots based on selected day of the week
+  // Filter valid timeslots based on selected day of the week and start time
   useEffect(() => {
-    if (dayOfWeek) {
+    if (fare.timeslots.length > 0) {
       const filteredTimeslots = fare.timeslots.filter(
         (slot) => slot.dayOfWeek === dayOfWeek
       );
-      setValidTimeslots(filteredTimeslots);
 
-      // Get the min and max times for the valid timeslots
-      if (filteredTimeslots.length > 0) {
-        const times = filteredTimeslots.map((slot) => ({
-          start: dayjs(slot.startTime, "HH:mm:ss"),
-          end: dayjs(slot.endTime, "HH:mm:ss"),
-        }));
+      // Check if the timeslot exists and is valid
+      const validSlots = filteredTimeslots.filter((slot) => {
+        // Assuming the current selected start time
+        const slotStartTime = dayjs(slot.startTime, "HH:mm:ss");
+        const slotEndTime = dayjs(slot.endTime, "HH:mm:ss");
 
-        // Calculate the minimum and maximum times using the dayjs array methods
-        setMinTime(
-          times.reduce(
-            (prev, current) =>
-              prev.isBefore(current.start) ? prev : current.start,
-            times[0].start
+        return (
+          startTime &&
+          dayjs(startTime, "HH:mm:ss").isBetween(
+            slotStartTime,
+            slotEndTime,
+            null,
+            "[)"
           )
         );
-        setMaxTime(
-          times.reduce(
-            (prev, current) => (prev.isAfter(current.end) ? prev : current.end),
-            times[0].end
-          )
-        );
-      } else {
-        setMinTime(undefined);
-        setMaxTime(undefined);
-      }
+      });
 
-      // Check if the selected startTime already exists in the schedule
-      const isDuplicate = commuteSchedule.some(
-        (scheduleGroup) =>
-          scheduleGroup.dayOfWeek === dayOfWeek && // Check if it's the same day of the week
-          scheduleGroup.commuteSchedules.some((schedule) => {
-            // Check if the fare pass matches
-            if (schedule.fareId === fare.id) {
-              const existingStartTime = dayjs(schedule.startTime, "HH:mm:ss");
-              const existingEndTime = dayjs(schedule.endTime, "HH:mm:ss");
-
-              const newStartTime = dayjs(startTime || "00:00:00", "HH:mm:ss");
-              const newEndTime = newStartTime.add(fare.tripDuration, "minute");
-
-              // Check if the new schedule time overlaps with the existing schedule time
-              const isOverlapping =
-                // New start time is within the existing time range
-                newStartTime.isBetween(
-                  existingStartTime,
-                  existingEndTime,
-                  null,
-                  "[)"
-                ) ||
-                // New end time is within the existing time range
-                newEndTime.isBetween(
-                  existingStartTime,
-                  existingEndTime,
-                  null,
-                  "(]"
-                ) ||
-                // Existing start time is within the new time range
-                existingStartTime.isBetween(
-                  newStartTime,
-                  newEndTime,
-                  null,
-                  "[)"
-                ) ||
-                // Existing end time is within the new time range
-                existingEndTime.isBetween(newStartTime, newEndTime, null, "(]");
-
-              return isOverlapping;
-            }
-            return false;
-          })
-      );
-
-      setIsDuplicate(isDuplicate); // Set the duplicate state
+      // Set the valid slots to state
+      setValidTimeslots(validSlots);
     } else {
-      setValidTimeslots([]);
-      setMinTime(undefined);
-      setMaxTime(undefined);
-      setIsDuplicate(false);
+      setValidTimeslots([]); // Reset if no day is selected or no valid timeslots are found
     }
-  }, [dayOfWeek, fare.timeslots, startTime, commuteSchedule]);
-
-  // Check if the selected time is valid
-  const isValidTime = (time: string): boolean => {
-    const selectedTime = dayjs(time, "HH:mm:ss");
-    return minTime && maxTime
-      ? selectedTime.isBetween(minTime, maxTime, null, "[]")
-      : false;
-  };
+  }, [dayOfWeek, startTime, fare.timeslots]);
 
   const data = {
     fareDetailId: fare.id,
@@ -160,12 +93,6 @@ function GeneratedTicketModal({
 
     if (isDuplicate) {
       showAlert("This schedule already exists.", "error");
-      return;
-    }
-
-    // Check if the selected time is valid
-    if (!isValidTime(startTime || "00:00:00")) {
-      showAlert("The selected time is outside the valid fare times", "error");
       return;
     }
 
@@ -234,9 +161,6 @@ function GeneratedTicketModal({
             label="Start Time"
             value={dayjs(startTime, "HH:mm:ss")}
             onChange={(e) => setStartTime(e ? e.format("HH:mm:ss") : null)}
-            disabled={!validTimeslots.length} // Disable if no valid timeslots for the selected day
-            minTime={minTime}
-            maxTime={maxTime}
           />
         </LocalizationProvider>
 
@@ -248,7 +172,7 @@ function GeneratedTicketModal({
 
         {validTimeslots.length === 0 && (
           <div style={{ color: "red", fontSize: "0.875rem" }}>
-            No valid times available for this day.
+            Fare not valid during this time.
           </div>
         )}
         <Button
