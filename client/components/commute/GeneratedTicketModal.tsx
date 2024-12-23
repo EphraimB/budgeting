@@ -60,10 +60,30 @@ function GeneratedTicketModal({
         );
       });
 
+      // Ensure startTime is consistently formatted as a dayjs object
+      const selectedStartTime = dayjs(startTime || "00:00:00", "HH:mm:ss");
+
+      // Check if the selected schedule is a duplicate
+      const isDuplicate = commuteSchedule.some(
+        (scheduleGroup) =>
+          scheduleGroup.dayOfWeek === dayOfWeek && // Check if it's the same day of the week
+          scheduleGroup.commuteSchedules.some(
+            (schedule) =>
+              schedule.pass === fare.name && // Match the fare pass
+              dayjs(schedule.startTime, "HH:mm:ss").isSame(
+                selectedStartTime,
+                "minute"
+              ) // Check for exact time match up to the minute
+          )
+      );
+
+      setIsDuplicate(isDuplicate);
+
       // Set the valid slots to state
       setValidTimeslots(validSlots);
     } else {
       setValidTimeslots([]); // Reset if no day is selected or no valid timeslots are found
+      setIsDuplicate(false);
     }
   }, [dayOfWeek, startTime, fare.timeslots]);
 
@@ -74,28 +94,6 @@ function GeneratedTicketModal({
   };
 
   const handleAddToSchedule = async () => {
-    // Ensure startTime is consistently formatted as a dayjs object
-    const selectedStartTime = dayjs(startTime || "00:00:00", "HH:mm:ss");
-
-    // Check if the selected schedule is a duplicate
-    const isDuplicate = commuteSchedule.some(
-      (scheduleGroup) =>
-        scheduleGroup.dayOfWeek === dayOfWeek && // Check if it's the same day of the week
-        scheduleGroup.commuteSchedules.some(
-          (schedule) =>
-            schedule.pass === fare.name && // Match the fare pass
-            dayjs(schedule.startTime, "HH:mm:ss").isSame(
-              selectedStartTime,
-              "minute"
-            ) // Check for exact time match up to the minute
-        )
-    );
-
-    if (isDuplicate) {
-      showAlert("This schedule already exists.", "error");
-      return;
-    }
-
     try {
       // Submit the new schedule
       await addCommuteSchedule(data);
