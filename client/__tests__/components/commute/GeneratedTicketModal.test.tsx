@@ -132,7 +132,7 @@ describe("GeneratedTicketModal", () => {
     userEvent.click(addButton);
   });
 
-  it("disables Add to schedule button for duplicate timeslot", async () => {
+  it("disables Add to schedule button for duplicate schedule", async () => {
     const setOpen = jest.fn();
 
     // Simulate a situation where the start time is already occupied
