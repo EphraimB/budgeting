@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import FareDetailDelete from "../../../components/fareDetails/FareDetailDelete";
+import { FareDetail } from "@/app/types/types";
 
 jest.mock("../../../context/FeedbackContext", () => ({
   useAlert: () => ({
@@ -14,13 +15,14 @@ jest.mock("../../../context/FeedbackContext", () => ({
 describe("FareDetailDelete Component", () => {
   const mockSetFareDetailModes = jest.fn();
 
-  const fareDetail = {
+  const fareDetail: FareDetail = {
     id: 1,
     accountId: 1,
-    commuteSystemId: 1,
     commuteSystemName: "OMNY",
-    stationId: 1,
     name: "Bus System",
+    fromStation: "Hempstead Transit Center",
+    toStation: "Cedarhurst",
+    tripDuration: 46,
     fare: 2.76,
     timeslots: [],
     alternateFareDetailId: null,

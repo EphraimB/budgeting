@@ -8,10 +8,11 @@ describe("FareDetailsCards Component", () => {
     {
       id: 1,
       accountId: 1,
-      commuteSystemId: 1,
       commuteSystemName: "OMNY",
-      stationId: 1,
       name: "Bus System",
+      fromStation: "Hempstead Transit Center",
+      toStation: "Cedarhurst",
+      tripDuration: 46,
       fare: 2.76,
       timeslots: [],
       alternateFareDetailId: null,

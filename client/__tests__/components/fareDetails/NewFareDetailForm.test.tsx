@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import NewFareDetailForm from "../../../components/fareDetails/NewFareDetailForm";
 import userEvent from "@testing-library/user-event";
+import { FareDetail } from "@/app/types/types";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -20,14 +21,15 @@ jest.mock("../../../context/FeedbackContext", () => ({
 describe("NewFareDetailForm Component", () => {
   const setShowFareDetailForm = jest.fn();
 
-  const fareDetails = [
+  const fareDetails: FareDetail[] = [
     {
       id: 1,
       accountId: 1,
-      commuteSystemId: 1,
       commuteSystemName: "OMNY",
-      stationId: 1,
       name: "Bus System",
+      fromStation: "Hempstead Transit Center",
+      toStation: "Cedarhurst",
+      tripDuration: 46,
       fare: 2.76,
       timeslots: [],
       alternateFareDetailId: null,
@@ -39,10 +41,11 @@ describe("NewFareDetailForm Component", () => {
     {
       id: 2,
       accountId: 1,
-      commuteSystemId: 1,
       commuteSystemName: "OMNY",
-      stationId: 1,
       name: "Train System",
+      fromStation: "Cedarhurst Av",
+      toStation: "Hempstead Av/Spruce St",
+      tripDuration: 35,
       fare: 5,
       timeslots: [],
       alternateFareDetailId: null,

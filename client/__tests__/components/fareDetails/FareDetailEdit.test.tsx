@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import FareDetailEdit from "../../../components/fareDetails/FareDetailEdit";
 import userEvent from "@testing-library/user-event";
+import { FareDetail } from "@/app/types/types";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -20,13 +21,14 @@ jest.mock("../../../context/FeedbackContext", () => ({
 describe("FareDetailEdit Component", () => {
   const mockSetFareDetailModes = jest.fn();
 
-  const fareDetail = {
+  const fareDetail: FareDetail = {
     id: 1,
     accountId: 1,
-    commuteSystemId: 1,
     commuteSystemName: "OMNY",
-    stationId: 1,
     name: "Bus System",
+    fromStation: "Hempstead Transit Center",
+    toStation: "Cedarhurst",
+    tripDuration: 46,
     fare: 2.76,
     timeslots: [],
     alternateFareDetailId: null,
@@ -36,14 +38,15 @@ describe("FareDetailEdit Component", () => {
     dateModified: "2020-01-01",
   };
 
-  const fareDetails = [
+  const fareDetails: FareDetail[] = [
     {
       id: 1,
       accountId: 1,
-      commuteSystemId: 1,
       commuteSystemName: "OMNY",
-      stationId: 1,
       name: "Bus System",
+      fromStation: "Hempstead Transit Center",
+      toStation: "Cedarhurst",
+      tripDuration: 46,
       fare: 2.76,
       timeslots: [],
       alternateFareDetailId: null,
@@ -55,10 +58,11 @@ describe("FareDetailEdit Component", () => {
     {
       id: 2,
       accountId: 1,
-      commuteSystemId: 1,
       commuteSystemName: "OMNY",
-      stationId: 1,
       name: "Train System",
+      fromStation: "Cedarhurst",
+      toStation: "Nassau Blvd",
+      tripDuration: 80,
       fare: 5,
       timeslots: [],
       alternateFareDetailId: null,
