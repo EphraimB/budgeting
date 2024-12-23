@@ -1,4 +1,9 @@
-import { FareDetail, FullCommuteSchedule, Timeslot } from "@/app/types/types";
+import {
+  CommuteSchedule,
+  FareDetail,
+  FullCommuteSchedule,
+  Timeslot,
+} from "@/app/types/types";
 import {
   Button,
   MenuItem,
@@ -11,7 +16,7 @@ import { addCommuteSchedule } from "../../services/actions/commuteSchedule";
 import { useAlert, useSnackbar } from "../../context/FeedbackContext";
 import { useState, useEffect } from "react";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import isBetween from "dayjs/plugin/isBetween";
 
@@ -35,6 +40,23 @@ function GeneratedTicketModal({
   const [startTime, setStartTime] = useState<string | null>("00:00:00");
   const [validTimeslots, setValidTimeslots] = useState<Timeslot[]>([]);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
+
+  // Function to check for schedule overlaps
+  const isOverlapping = (
+    existingSchedule: CommuteSchedule,
+    newStartTime: Dayjs,
+    newEndTime: Dayjs
+  ) => {
+    const existingStartTime = dayjs(existingSchedule.startTime, "HH:mm:ss");
+    const existingEndTime = dayjs(existingSchedule.endTime, "HH:mm:ss");
+
+    // Check if the new schedule overlaps with the existing schedule
+    return (
+      // New schedule starts before the existing one ends and ends after the existing one starts
+      newStartTime.isBefore(existingEndTime) &&
+      newEndTime.isAfter(existingStartTime)
+    );
+  };
 
   // Filter valid timeslots based on selected day of the week and start time
   useEffect(() => {
@@ -60,32 +82,26 @@ function GeneratedTicketModal({
         );
       });
 
-      // Ensure startTime is consistently formatted as a dayjs object
-      const selectedStartTime = dayjs(startTime || "00:00:00", "HH:mm:ss");
-
-      // Check if the selected schedule is a duplicate
-      const isDuplicate = commuteSchedule.some(
-        (scheduleGroup) =>
-          scheduleGroup.dayOfWeek === dayOfWeek && // Check if it's the same day of the week
-          scheduleGroup.commuteSchedules.some(
-            (schedule) =>
-              schedule.pass === fare.name && // Match the fare pass
-              dayjs(schedule.startTime, "HH:mm:ss").isSame(
-                selectedStartTime,
-                "minute"
-              ) // Check for exact time match up to the minute
-          )
-      );
-
-      setIsDuplicate(isDuplicate);
-
       // Set the valid slots to state
       setValidTimeslots(validSlots);
     } else {
       setValidTimeslots([]); // Reset if no day is selected or no valid timeslots are found
-      setIsDuplicate(false);
     }
-  }, [dayOfWeek, startTime, fare.timeslots]);
+
+    // Check if the selected schedule overlaps with any existing schedules
+    const isDuplicate = commuteSchedule.some(
+      (scheduleGroup) =>
+        scheduleGroup.dayOfWeek === dayOfWeek && // Check if it's the same day of the week
+        scheduleGroup.commuteSchedules.some((schedule) => {
+          const newStartTime = dayjs(startTime || "00:00:00", "HH:mm:ss");
+          const newEndTime = newStartTime.add(fare.tripDuration, "minute");
+
+          return isOverlapping(schedule, newStartTime, newEndTime);
+        })
+    );
+
+    setIsDuplicate(isDuplicate);
+  }, [dayOfWeek, startTime, fare.timeslots, isDuplicate]);
 
   const data = {
     fareDetailId: fare.id,
