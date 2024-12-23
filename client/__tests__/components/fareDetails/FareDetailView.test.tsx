@@ -13,10 +13,11 @@ describe("FareDetailsView Component", () => {
   const fareDetail: FareDetail = {
     id: 1,
     accountId: 1,
-    commuteSystemId: 1,
     commuteSystemName: "OMNY",
-    stationId: 1,
     name: "Bus System",
+    fromStation: "Cedarhurst Av",
+    toStation: "Hempstead Av/Spruce St",
+    tripDuration: 35,
     fare: 2.76,
     timeslots: [],
     alternateFareDetailId: null,
