@@ -17,6 +17,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/commuteStation", () => ({
+  editCommuteStation: jest.fn(),
+}));
+
 describe("CommuteStationEdit Component", () => {
   const mockSetCommuteStationModes = jest.fn();
 
