@@ -3,6 +3,10 @@ import "@testing-library/jest-dom";
 import CommuteSystemCards from "../../../components/commuteSystem/CommuteSystemCards";
 import { CommuteSystem } from "@/app/types/types";
 
+jest.mock("../../../services/actions/commuteSystem", () => ({
+  editCommuteSystem: jest.fn(),
+}));
+
 describe("CommuteSystemCards Component", () => {
   const commuteSystems: CommuteSystem[] = [
     {

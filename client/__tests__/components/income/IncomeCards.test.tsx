@@ -8,6 +8,10 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+jest.mock("../../../services/actions/income", () => ({
+  editIncome: jest.fn(),
+}));
+
 describe("IncomeCards", () => {
   it("renders income cards with provided incomes and taxes", () => {
     render(<IncomeCards accountId={1} incomes={[]} taxes={[]} />);

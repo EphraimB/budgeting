@@ -9,6 +9,10 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+jest.mock("../../../services/actions/wishlist", () => ({
+  editWishlist: jest.fn(),
+}));
+
 describe("WishlistCards", () => {
   it("renders wishlist cards with provided wishlists", () => {
     const account_id: number = 1;

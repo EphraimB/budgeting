@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/commuteSchedule", () => ({
+  deleteCommuteSchedule: jest.fn(),
+}));
+
 describe("CommuteScheduleDelete Component", () => {
   const commuteSchedule: CommuteSchedule = {
     id: 1,

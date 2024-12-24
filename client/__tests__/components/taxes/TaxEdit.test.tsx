@@ -27,6 +27,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/tax", () => ({
+  editTax: jest.fn(),
+}));
+
 describe("TaxEdit", () => {
   it("renders TaxEdit form component", async () => {
     const tax = {

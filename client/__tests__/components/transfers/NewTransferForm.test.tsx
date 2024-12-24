@@ -20,6 +20,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/transfer", () => ({
+  addTransfer: jest.fn(),
+}));
+
 describe("NewTransferForm", () => {
   it("renders the component", async () => {
     const accounts: Account[] = [

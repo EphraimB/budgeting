@@ -113,9 +113,9 @@ export default async function Layout({
   params,
 }: {
   children: React.ReactNode;
-  params: { accountId: string };
+  params: Promise<{ accountId: string }>;
 }) {
-  const accountId = parseInt(params.accountId);
+  const accountId = parseInt((await params).accountId);
 
   const accounts = await getAccounts();
   const incomes = await getIncome(accountId);

@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/account", () => ({
+  editAccount: jest.fn(),
+}));
+
 describe("AccountEdit", () => {
   it("renders", () => {
     render(

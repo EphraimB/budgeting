@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/Job", () => ({
+  deleteJob: jest.fn(),
+}));
+
 describe("JobDelete", () => {
   const setJobModes = jest.fn();
 

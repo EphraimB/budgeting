@@ -3,6 +3,10 @@ import { render, screen } from "@testing-library/react";
 import JobScheduleDayView from "../../../components/jobs/JobScheduleDayView";
 import "@testing-library/jest-dom";
 
+jest.mock("../../../services/actions/job", () => ({
+  addJob: jest.fn(),
+}));
+
 describe("JobScheduleDayView", () => {
   const job = {
     id: 1,

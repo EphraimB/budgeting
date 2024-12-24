@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/fareDetail", () => ({
+  deleteFareDetail: jest.fn(),
+}));
+
 describe("FareDetailDelete Component", () => {
   const mockSetFareDetailModes = jest.fn();
 

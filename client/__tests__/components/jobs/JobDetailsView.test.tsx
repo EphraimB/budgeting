@@ -14,6 +14,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/job", () => ({
+  editJob: jest.fn(),
+}));
+
 describe("JobDetailsView", () => {
   const job = {
     id: 1,

@@ -7,6 +7,16 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+jest.mock("../../../services/actions/account", () => ({
+  addAccount: jest.fn(),
+  editAccount: jest.fn(),
+  deleteAccount: jest.fn(),
+}));
+
+jest.mock("../../../services/actions/transactionHistory", () => ({
+  addTransactionHistory: jest.fn(),
+}));
+
 describe("AccountList", () => {
   it("renders accounts correctly", () => {
     const mockAccounts = [

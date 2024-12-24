@@ -19,6 +19,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/loan", () => ({
+  addLoan: jest.fn(),
+}));
+
 describe("NewLoanForm", () => {
   it("renders the component", async () => {
     render(<NewLoanForm accountId={1} setShowLoanForm={() => true} />);

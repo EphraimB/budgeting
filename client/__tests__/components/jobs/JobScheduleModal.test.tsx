@@ -3,6 +3,10 @@ import { render, screen } from "@testing-library/react";
 import JobScheduleModal from "../../../components/jobs/JobScheduleModal";
 import "@testing-library/jest-dom";
 
+jest.mock("../../../services/actions/job", () => ({
+  addJob: jest.fn(),
+}));
+
 describe("JobScheduleModal", () => {
   const setOpen = jest.fn();
 
