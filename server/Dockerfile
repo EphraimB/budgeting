@@ -1,5 +1,5 @@
 # ------ Build stage ------
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set the working directory
 WORKDIR /home/node/app
@@ -15,7 +15,7 @@ COPY . .
 RUN npm run build
 
 # ------ Runtime stage ------
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Set the working directory to match the Docker Compose setup
 WORKDIR /home/node/app
