@@ -60,6 +60,8 @@ describe('GET /api/expenses/commute/stations', () => {
             '../../src/controllers/commuteStationsController.js'
         );
 
+        mockRequest.query = { commuteSystemId: null };
+
         // Call the function with the mock request and response
         await getStations(mockRequest as Request, mockResponse);
 
@@ -75,6 +77,8 @@ describe('GET /api/expenses/commute/stations', () => {
         const { getStations } = await import(
             '../../src/controllers/commuteStationsController.js'
         );
+
+        mockRequest.query = { commuteSystemId: null };
 
         // Act
         await getStations(mockRequest as Request, mockResponse).catch(() => {
@@ -100,6 +104,7 @@ describe('GET /api/expenses/commute/stations/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
+        mockRequest.query = { commuteSystemId: null };
 
         // Call the function with the mock request and response
         await getStationById(mockRequest as Request, mockResponse);
@@ -120,6 +125,7 @@ describe('GET /api/expenses/commute/stations/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
+        mockRequest.query = { commuteSystemId: null };
 
         // Act
         await getStationById(mockRequest as Request, mockResponse).catch(() => {
@@ -140,6 +146,7 @@ describe('GET /api/expenses/commute/stations/:id', () => {
         );
 
         mockRequest.params = { id: 3 };
+        mockRequest.query = { commuteSystemId: null };
 
         // Act
         await getStationById(mockRequest as Request, mockResponse);

@@ -206,6 +206,7 @@ CREATE TABLE IF NOT EXISTS stations (
     commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
     from_station VARCHAR(255) NOT NULL,
     to_station VARCHAR(255) NOT NULL,
+    trip_duration INT NOT NULL,
     date_created TIMESTAMP NOT NULL,
     date_modified TIMESTAMP NOT NULL
 );
@@ -238,7 +239,6 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   cron_job_id INT REFERENCES cron_jobs(id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
-  end_time TIME NOT NULL,
   fare_details_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,

@@ -8,3 +8,4 @@ dist/
 ts-jest.log
 crontabs/
 logs/
+__snapshots__

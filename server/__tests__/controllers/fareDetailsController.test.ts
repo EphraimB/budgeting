@@ -142,6 +142,8 @@ describe('GET /api/expenses/commute/fares', () => {
             '../../src/controllers/fareDetailsController.js'
         );
 
+        mockRequest.query = { stationId: null };
+
         // Call the function with the mock request and response
         await getFareDetails(mockRequest as Request, mockResponse);
 
@@ -157,6 +159,8 @@ describe('GET /api/expenses/commute/fares', () => {
         const { getFareDetails } = await import(
             '../../src/controllers/fareDetailsController.js'
         );
+
+        mockRequest.query = { stationId: null };
 
         // Act
         await getFareDetails(mockRequest as Request, mockResponse).catch(() => {
@@ -182,6 +186,7 @@ describe('GET /api/expenses/commute/fares/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
+        mockRequest.query = { stationId: null };
 
         // Call the function with the mock request and response
         await getFareDetailsById(mockRequest as Request, mockResponse);
@@ -202,6 +207,7 @@ describe('GET /api/expenses/commute/fares/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
+        mockRequest.query = { stationId: null };
 
         // Act
         await getFareDetailsById(mockRequest as Request, mockResponse).catch(
@@ -313,7 +319,8 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
                 commuteSystems.filter(
                     (commuteSystem) => commuteSystem.id === 1,
                 ),
-                timeslots.filter((timeslot) => timeslot.id === 1),
+                [],
+                [],
                 [],
                 [],
                 fareDetails.filter((fareDetail) => fareDetail.id === 1),

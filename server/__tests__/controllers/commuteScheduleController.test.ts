@@ -253,45 +253,19 @@ describe('POST /api/expenses/commute/schedule', () => {
         mockModule(
             [
                 [{ id: 1, duration: 30, day_start: 1 }],
-                [],
                 [
                     {
-                        id: 1,
-                        system_name: 'LIRR',
-                        fare_type: 'Monthly',
-                        fare: 230,
-                        alternate_fare_detail_id: null,
-                    },
-                ],
-                [
-                    {
-                        id: 1,
-                        system_name: 'LIRR',
-                        fare_type: 'Monthly',
-                        fare: 230,
-                        alternate_fare_detail_id: null,
-                    },
-                ],
-                [
-                    {
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
-                    },
-                ],
-                [],
-                [
-                    {
-                        id: 1,
-                        commute_system_id: 1,
+                        overlapping_schedule_id: null,
                         fare_detail_id: 1,
-                        account_id: 1,
-                        cron_job_id: 1,
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
+                        system_name: 'LIRR',
+                        fare_type: 'monthly',
+                        original_fare: 230,
+                        fare: 230,
+                        system_opened: true,
                     },
                 ],
+                [],
+                [{ id: 1 }],
                 [
                     {
                         id: 1,
@@ -308,7 +282,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                         fare: 230,
                     },
                 ],
-                [{ id: 1 }],
+                [],
                 [],
                 [],
                 [{ id: 1 }],
@@ -362,7 +336,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                 day_start: 1,
                 fare: 230,
             },
-            alerts: [],
+            alerts: '',
         };
 
         // Assert
@@ -375,45 +349,19 @@ describe('POST /api/expenses/commute/schedule', () => {
         mockModule(
             [
                 [{ id: 1, duration: null, day_start: null }],
-                [],
                 [
                     {
-                        id: 1,
-                        system_name: 'OMNY',
-                        fare_type: 'Regular',
-                        fare: 2.9,
-                        alternate_fare_detail_id: null,
-                    },
-                ],
-                [
-                    {
-                        id: 1,
-                        system_name: 'OMNY',
-                        fare_type: 'Regular',
-                        fare: 2.9,
-                        alternate_fare_detail_id: null,
-                    },
-                ],
-                [
-                    {
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
-                    },
-                ],
-                [],
-                [
-                    {
-                        id: 1,
-                        commute_system_id: 1,
+                        overlapping_schedule_id: null,
                         fare_detail_id: 1,
-                        account_id: 1,
-                        cron_job_id: 1,
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
+                        system_name: 'OMNY',
+                        fare_type: 'Regular',
+                        original_fare: 2.9,
+                        fare: 2.9,
+                        system_opened: true,
                     },
                 ],
+                [],
+                [{ id: 1 }],
                 [
                     {
                         id: 1,
@@ -427,12 +375,12 @@ describe('POST /api/expenses/commute/schedule', () => {
                         end_time: '10:00:00',
                         duration: null,
                         day_start: null,
-                        fare: 2.9,
+                        fare: 1.45,
                     },
                 ],
                 [],
                 [],
-                [{ id: 1, unique_id: 'v873fovcb' }],
+                [{ id: 1 }],
                 [],
                 [],
             ],
@@ -483,7 +431,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                 day_start: null,
                 fare: 2.9,
             },
-            alerts: [],
+            alerts: '',
         };
 
         // Assert
@@ -496,54 +444,19 @@ describe('POST /api/expenses/commute/schedule', () => {
         mockModule(
             [
                 [{ id: 1, duration: null, day_start: null }],
-                [],
                 [
                     {
-                        id: 1,
-                        system_name: 'LIRR',
-                        fare_type: 'Off peak',
-                        fare: 9.75,
-                        alternate_fare_detail_id: 1,
-                    },
-                ],
-                [
-                    {
-                        id: 1,
-                        system_name: 'LIRR',
-                        fare_type: 'Off peak',
-                        fare: 9.75,
-                        alternate_fare_detail_id: 1,
-                    },
-                ],
-                [
-                    {
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
-                    },
-                ],
-                [
-                    {
-                        id: 1,
+                        overlapping_schedule_id: null,
+                        fare_detail_id: 1,
                         system_name: 'LIRR',
                         fare_type: 'Peak',
+                        original_fare: 9.75,
                         fare: 13,
-                        alternate_fare_detail_id: null,
+                        system_opened: true,
                     },
                 ],
                 [],
-                [
-                    {
-                        id: 1,
-                        commute_system_id: 1,
-                        fare_detail_id: 1,
-                        account_id: 1,
-                        cron_job_id: 1,
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
-                    },
-                ],
+                [{ id: 1 }],
                 [
                     {
                         id: 1,
@@ -562,7 +475,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                 ],
                 [],
                 [],
-                [{ id: 1, unique_id: 'vc3c83qbpe892' }],
+                [{ id: 1 }],
                 [],
                 [],
             ],
@@ -613,11 +526,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                 day_start: null,
                 fare: 13,
             },
-            alerts: [
-                {
-                    message: 'fare automatically stepped up to 13',
-                },
-            ],
+            alerts: 'Fare stepped up $3.25',
         };
 
         // Assert
@@ -629,10 +538,17 @@ describe('POST /api/expenses/commute/schedule', () => {
         // Arrange
         mockModule([
             [{ id: 1 }],
-            [],
-            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
-            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
-            [{ day_of_week: 1, start_time: '08:00:00', end_time: '10:00:00' }],
+            [
+                {
+                    overlapping_schedule_id: null,
+                    fare_detail_id: 1,
+                    system_name: 'LIRR',
+                    fare_type: 'Peak',
+                    original_fare: 9.75,
+                    fare: 13,
+                    system_opened: false,
+                },
+            ],
         ]);
 
         const { createCommuteSchedule } = await import(
@@ -691,30 +607,15 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
             [
                 [{ id: 1, cron_job_id: 1 }],
                 [{ id: 1 }],
-                [],
                 [
                     {
-                        id: 1,
+                        overlapping_schedule_id: null,
+                        fare_detail_id: 1,
                         system_name: 'OMNY',
                         fare_type: 'Regular',
+                        original_fare: 2.9,
                         fare: 2.9,
-                        alternate_fare_id: null,
-                    },
-                ],
-                [
-                    {
-                        id: 1,
-                        system_name: 'OMNY',
-                        fare_type: 'Regular',
-                        fare: 2.9,
-                        alternate_fare_id: null,
-                    },
-                ],
-                [
-                    {
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
+                        system_opened: true,
                     },
                 ],
                 [],
@@ -727,7 +628,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                         cron_job_id: 1,
                         fare_detail_id: 1,
                         day_of_week: 1,
-                        pass: 'OMNY regular',
+                        pass: 'OMNY Regular',
                         start_time: '08:00:00',
                         end_time: '10:00:00',
                         duration: null,
@@ -736,7 +637,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                     },
                 ],
                 [{ id: 1, duration: null }],
-                [{ id: 1, unique_id: 'v6ce3v87' }],
+                [{ id: 1, unique_id: 'b873o4f9' }],
                 [],
                 [],
                 [],
@@ -750,7 +651,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                 cron_job_id: 1,
                 fare_detail_id: 1,
                 day_of_week: 1,
-                pass: 'OMNY regular',
+                pass: 'OMNY Regular',
                 start_time: '08:00:00',
                 end_time: '10:00:00',
                 duration: null,
@@ -785,14 +686,14 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                 cron_job_id: 1,
                 fare_detail_id: 1,
                 day_of_week: 1,
-                pass: 'OMNY regular',
+                pass: 'OMNY Regular',
                 start_time: '08:00:00',
                 end_time: '10:00:00',
                 duration: null,
                 day_start: null,
                 fare: 2.9,
             },
-            alerts: [],
+            alerts: '',
         };
 
         // Assert
