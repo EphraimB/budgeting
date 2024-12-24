@@ -171,17 +171,21 @@ function TaxEdit({
               label="Rate"
               variant="standard"
               type="number"
-              inputProps={{
-                step: 0.01,
-              }}
               value={rate ? parseFloat(rate) * 100 : "0"}
               error={!!rateError}
               helperText={rateError}
               onChange={(e) =>
                 setRate((parseFloat(e.target.value) / 100).toString())
               }
-              InputProps={{
-                endAdornment: <InputAdornment position="end">%</InputAdornment>,
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">%</InputAdornment>
+                  ),
+                  inputProps: {
+                    step: 0.01,
+                  },
+                },
               }}
               fullWidth
             />

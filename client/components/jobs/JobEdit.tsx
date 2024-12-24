@@ -132,8 +132,12 @@ function JobEdit({
           error={!!hourlyRateError}
           helperText={hourlyRateError}
           onChange={(e) => setHourlyRate(parseInt(e.target.value))}
-          InputProps={{
-            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            },
           }}
           fullWidth
         />

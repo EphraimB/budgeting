@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
@@ -20,13 +20,13 @@ function TaxCards({ taxes }: { taxes: Tax[] }) {
     <>
       <Grid container spacing={2}>
         {showTaxForm && (
-          <Grid key="new-tax" item>
+          <Grid key="new-tax">
             <NewTaxForm setShowTaxForm={setShowTaxForm} />
           </Grid>
         )}
 
         {taxes.map((tax: Tax) => (
-          <Grid key={tax.id} item>
+          <Grid key={tax.id}>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {taxModes[tax.id] === "delete" ? (
                 <TaxDelete tax={tax} setTaxModes={setTaxModes} />

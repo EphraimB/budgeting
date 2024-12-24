@@ -218,17 +218,19 @@ function NewTransferForm({
               label="Amount"
               variant="standard"
               type="number"
-              inputProps={{
-                step: 0.01,
-              }}
               value={amount ? amount : "0"}
               onChange={(e) => setAmount(e.target.value)}
               error={!!amountError}
               helperText={amountError}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                  inputProps: {
+                    step: 0.01,
+                  },
+                },
               }}
             />
             <br />

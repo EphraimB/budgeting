@@ -37,14 +37,12 @@ export default function CommuteNavTabs({ accountId }: { accountId: number }) {
         >
           <Link
             href={`/${accountId}/commute`}
-            as={`/${accountId}/commute`}
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Tab label="Home" />
           </Link>
           <Link
             href={`/${accountId}/commute/setup`}
-            as={`/${accountId}/commute/setup`}
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Tab label="Setup" />

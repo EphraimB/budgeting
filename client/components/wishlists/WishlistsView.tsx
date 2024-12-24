@@ -58,7 +58,7 @@ function WishlistsView({
       <CardHeader title={wishlist.title} subheader={wishlist.description} />
       <CardContent>
         <Typography variant="body2">
-          You will be charged ${wishlist.amount} for this item{" "}
+          You will be charged ${wishlist.amount.toFixed(2)} for this item{" "}
           {wishlist.dateCanPurchase
             ? "on " +
               dayjs(wishlist.dateCanPurchase).format("dddd MMMM D, YYYY h:mm A")

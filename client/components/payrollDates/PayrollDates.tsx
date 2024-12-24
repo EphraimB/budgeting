@@ -2,7 +2,7 @@
 
 import { Job, PayrollDate } from "@/app/types/types";
 import React from "react";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import PayrollDateCard from "./PayrollDateCard";
 import { Typography } from "@mui/material";
 
@@ -29,7 +29,7 @@ function PayrollDates({
           );
 
           return (
-            <Grid item key={number} xs={6} md={2}>
+            <Grid container key={number} size={{ xs: 6, md: 2 }}>
               <PayrollDateCard
                 key={number}
                 jobId={job.id}

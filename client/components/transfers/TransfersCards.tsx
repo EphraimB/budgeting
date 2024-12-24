@@ -6,7 +6,7 @@ import { Account, Transfer } from "@/app/types/types";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import TransferDelete from "./TransferDelete";
 import TransfersView from "./TransfersView";
 import NewTransferForm from "./NewTransferForm";
@@ -30,7 +30,7 @@ function TransferCards({
     <>
       <Grid container spacing={2}>
         {showTransferForm && (
-          <Grid key="new-transfer" item>
+          <Grid key="new-transfer">
             <NewTransferForm
               accountId={accountId}
               setShowTransferForm={setShowTransferForm}
@@ -40,7 +40,7 @@ function TransferCards({
         )}
 
         {transfers.map((transfer: Transfer) => (
-          <Grid key={transfer.id} item>
+          <Grid key={transfer.id}>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {transferModes[transfer.id] === "delete" ? (
                 <TransferDelete

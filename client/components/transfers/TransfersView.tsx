@@ -63,7 +63,7 @@ function TransfersView({
       <CardHeader title={transfer.title} subheader={transfer.description} />
       <CardContent>
         <Typography variant="body2">
-          ${transfer.amount} will be transfered{" "}
+          ${transfer.amount.toFixed(2)} will be transfered{" "}
           {transfer.sourceAccountId === accountId
             ? "from"
             : transfer.destinationAccountId === accountId

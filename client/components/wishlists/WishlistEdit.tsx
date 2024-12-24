@@ -192,17 +192,19 @@ function WishlistEdit({
             <TextField
               label="Amount"
               variant="standard"
-              inputProps={{
-                step: 0.01,
-              }}
               value={amount}
               error={!!amountError}
               helperText={amountError}
               onChange={(e) => setAmount(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                  inputProps: {
+                    step: 0.01,
+                  },
+                },
               }}
               fullWidth
             />

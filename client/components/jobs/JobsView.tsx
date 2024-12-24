@@ -56,13 +56,12 @@ function JobsView({
       />
       <Link
         href={`/${accountId}/jobs/${job.id}`}
-        as={`/${accountId}/jobs/${job.id}`}
         style={{ textDecoration: "none", color: "inherit" }}
       >
         <CardHeader title={job.name} />
         <CardContent>
           <Typography variant="body2">
-            You get paid ${job.hourlyRate} per hour, and you work{" "}
+            You get paid ${job.hourlyRate.toFixed(2)} per hour, and you work{" "}
             {job.totalHoursPerWeek} hours per week.
           </Typography>
           <br />
