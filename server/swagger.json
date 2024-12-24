@@ -4692,49 +4692,42 @@
             "commuteHistory": {
                 "properties": {
                     "SuccessResponseCommuteHistory": {
-                        "description": "A JSON object of a single commute history",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "format": "int64",
-                                            "minimum": 1
-                                        },
-                                        "accountId": {
-                                            "type": "integer",
-                                            "format": "int64",
-                                            "minimum": 1
-                                        },
-                                        "commuteSystem": {
-                                            "type": "string",
-                                            "example": "Subway"
-                                        },
-                                        "fare": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "example": 2.75
-                                        },
-                                        "fareType": {
-                                            "type": "string",
-                                            "example": "Standard"
-                                        },
-                                        "timestamp": {
-                                            "type": "string",
-                                            "format": "date-time"
-                                        },
-                                        "dateCreated": {
-                                            "type": "string",
-                                            "format": "date-time"
-                                        },
-                                        "dateModified": {
-                                            "type": "string",
-                                            "format": "date-time"
-                                        }
-                                    }
-                                }
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "commuteSystem": {
+                                "type": "string",
+                                "example": "Subway"
+                            },
+                            "fare": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 2.75
+                            },
+                            "fareType": {
+                                "type": "string",
+                                "example": "Standard"
+                            },
+                            "timestamp": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
                             }
                         }
                     },
