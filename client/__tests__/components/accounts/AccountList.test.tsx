@@ -8,7 +8,13 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("../../../services/actions/account", () => ({
+  addAccount: jest.fn(),
   editAccount: jest.fn(),
+  deleteAccount: jest.fn(),
+}));
+
+jest.mock("../../../services/actions/transactionHistory", () => ({
+  addTransactionHistory: jest.fn(),
 }));
 
 describe("AccountList", () => {
