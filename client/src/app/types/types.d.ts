@@ -164,6 +164,93 @@ export interface PayrollTax {
   rate: number;
 }
 
+interface FareCapProgress {
+  currentSpent: number;
+  fareCap: number;
+  fareCapDuration: number;
+}
+
+interface Systems {
+  systemName: string;
+  totalCostPerWeek: number;
+  totalCostPerMonth: number;
+  rides: number;
+  fareCapProgress: FareCapProgress;
+}
+
+export interface CommuteOverview {
+  accountId: number;
+  totalCostPerWeek: number;
+  totalCostPerMonth: number;
+  systems: Systems[];
+}
+
+export interface CommuteSystem {
+  id: number;
+  name: string;
+  fareCap: number | null;
+  fareCapDuration: number | null;
+  dateCreated: string;
+  dateModified: string;
+}
+
+export interface CommuteStation {
+  id: number;
+  fromStation: string;
+  toStation: string;
+  tripDuration: number;
+  dateCreated: string;
+  dateModified: string;
+}
+
+export interface Timeslot {
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+}
+
+export interface FareDetail {
+  id: number;
+  accountId: number;
+  fromStation: string;
+  toStation: string;
+  tripDuration: number;
+  commuteSystemName: string;
+  name: string;
+  fare: number;
+  timeslots: Timeslot[];
+  alternateFareDetailId: number | null;
+  duration: number | null;
+  dayStart: number | null;
+  dateCreated: string;
+  dateModified: string;
+}
+
+export interface FullCommuteSchedule {
+  dayOfWeek: number;
+  commuteSchedules: CommuteSchedule[];
+}
+
+export interface CommuteSchedule {
+  id: number;
+  fareId: number;
+  startTime: string;
+  endTime: string;
+  fare: number;
+  pass: string;
+}
+
+export interface CommuteHistory {
+  id: number;
+  accountId: number;
+  commuteSystem: string;
+  fare: number;
+  fareType: string;
+  timestamp: string;
+  dateCreated: string;
+  dateModified: string;
+}
+
 export interface GeneratedTransaction {
   accountId: number;
   currentBalance: number;

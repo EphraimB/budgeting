@@ -34,9 +34,6 @@ router.post(
         body('startTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
-        body('endTime')
-            .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
-            .withMessage('End time must be a time'),
         validateRequest,
     ],
     createCommuteSchedule,
@@ -54,9 +51,6 @@ router.put(
         body('startTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
-        body('endTime')
-            .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
-            .withMessage('End time must be a time'),
         validateRequest,
     ],
     updateCommuteSchedule,

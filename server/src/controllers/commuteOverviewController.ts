@@ -51,8 +51,9 @@ export const getCommuteOverview = async (
                     )
                 ) AS current_spent
                 FROM commute_schedule cs
-                JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                JOIN fare_details fd ON cs.fare_details_id = fd.id
+                JOIN stations s ON fd.station_id = s.id
+                JOIN commute_systems csy ON s.commute_system_id = csy.id
                 JOIN count_days cd ON cs.day_of_week = cd.day_of_week
                 WHERE fd.duration IS NULL
                 GROUP BY fd.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
@@ -116,8 +117,9 @@ export const getCommuteOverview = async (
                     )
                 ) AS current_spent
                 FROM commute_schedule cs
-                JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                JOIN fare_details fd ON cs.fare_details_id = fd.id
+                JOIN stations s ON fd.station_id = s.id
+                JOIN commute_systems csy ON s.commute_system_id = csy.id
                 JOIN count_days cd ON cs.day_of_week = cd.day_of_week
                 WHERE fd.duration IS NULL
                 GROUP BY fd.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id

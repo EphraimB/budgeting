@@ -1,9 +1,5 @@
 import { type Request, type Response } from 'express';
-import {
-    compareTimeslots,
-    handleError,
-    toCamelCase,
-} from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { type Timeslots } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
@@ -14,30 +10,79 @@ import pool from '../config/db.js';
  * Sends a response with all fare details
  */
 export const getFareDetails = async (
-    _: Request,
+    request: Request,
     response: Response,
 ): Promise<void> => {
+    const { stationId } = request.query;
+
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(
-            `
+        let query: string;
+        let params: any[];
+
+        if (stationId) {
+            query = `
                 SELECT
                     fare_details.account_id,
                     fare_details.id,
-                    commute_systems.id AS commute_system_id, commute_systems.name AS commute_system_name,
+                    stations.from_station,
+                    stations.to_station,
+                    stations.trip_duration,
+                    commute_systems.name AS commute_system_name,
                     fare_details.name, 
                     fare, 
                     COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
-                                'day_of_week', timeslots.day_of_week,
-                                'start_time', timeslots.start_time,
-                                'end_time', timeslots.end_time
+                                'dayOfWeek', timeslots.day_of_week,
+                                'startTime', timeslots.start_time,
+                                'endTime', timeslots.end_time
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
-                    ) AS timeslots, 
+                    ) AS timeslots,
+                    fare_details.duration,
+                    fare_details.day_start,
+                    alternate_fare_details_id,
+                    fare_details.date_created, 
+                    fare_details.date_modified
+                FROM 
+                    fare_details
+                LEFT JOIN 
+                    timeslots ON timeslots.fare_details_id = fare_details.id
+                LEFT JOIN stations ON fare_details.station_id = stations.id
+                LEFT JOIN 
+                    commute_systems ON stations.commute_system_id = commute_systems.id
+                WHERE stations.id = $1
+                GROUP BY 
+                    fare_details.id, stations.id, commute_systems.id;
+            `;
+
+            params = [stationId];
+        } else {
+            query = `
+                SELECT
+                    fare_details.account_id,
+                    fare_details.id,
+                    stations.from_station,
+                    stations.to_station,
+                    stations.trip_duration,
+                    commute_systems.name AS commute_system_name,
+                    fare_details.name, 
+                    fare, 
+                    COALESCE(
+                        JSON_AGG(
+                            JSON_BUILD_OBJECT(
+                                'dayOfWeek', timeslots.day_of_week,
+                                'startTime', timeslots.start_time,
+                                'endTime', timeslots.end_time
+                            )::json
+                        ) FILTER (WHERE timeslots.id IS NOT NULL), 
+                        '[]'::json
+                    ) AS timeslots,
+                    fare_details.duration,
+                    fare_details.day_start,
                     alternate_fare_details_id, 
                     fare_details.date_created, 
                     fare_details.date_modified
@@ -49,10 +94,12 @@ export const getFareDetails = async (
                 LEFT JOIN 
                     commute_systems ON stations.commute_system_id = commute_systems.id
                 GROUP BY 
-                    fare_details.id, commute_systems.id;
-            `,
-            [],
-        );
+                    fare_details.id, stations.id, commute_systems.id;
+            `;
+
+            params = [];
+        }
+        const { rows } = await client.query(query, params);
 
         const retreivedRows = toCamelCase(rows); // Convert to camelCase
 
@@ -76,28 +123,75 @@ export const getFareDetailsById = async (
     response: Response,
 ): Promise<void> => {
     const { id } = request.params;
+    const { stationId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(
-            `
+        let query: string;
+        let params: any[];
+
+        if (stationId) {
+            query = `
                 SELECT
                     fare_details.account_id,
                     fare_details.id,
-                    commute_systems.id AS commute_system_id, commute_systems.name AS commute_system_name,
+                    stations.from_station,
+                    stations.to_station,
+                    stations.trip_duration,
+                    commute_systems.name AS commute_system_name,
                     fare_details.name, 
                     fare, 
                     COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
-                                'day_of_week', timeslots.day_of_week,
-                                'start_time', timeslots.start_time,
-                                'end_time', timeslots.end_time
+                                'dayOfWeek', timeslots.day_of_week,
+                                'startTime', timeslots.start_time,
+                                'endTime', timeslots.end_time
+                            )::json
+                        ) FILTER (WHERE timeslots.id IS NOT NULL), 
+                        '[]'::json
+                    ) AS timeslots,
+                    fare_details.duration,
+                    fare_details.day_start,
+                    alternate_fare_details_id, 
+                    fare_details.date_created, 
+                    fare_details.date_modified
+                FROM 
+                    fare_details
+                LEFT JOIN 
+                    timeslots ON timeslots.fare_details_id = fare_details.id
+                LEFT JOIN stations ON fare_details.station_id = stations.id
+                LEFT JOIN 
+                    commute_systems ON stations.commute_system_id = commute_systems.id
+                WHERE fare_details.id = $1 AND stations.id = $2
+                GROUP BY 
+                    fare_details.id, stations.id, commute_systems.id;
+            `;
+            params = [id, stationId];
+        } else {
+            query = `
+                SELECT
+                    fare_details.account_id,
+                    fare_details.id,
+                    stations.from_station,
+                    stations.to_station,
+                    stations.trip_duration,
+                    commute_systems.name AS commute_system_name,
+                    fare_details.name, 
+                    fare, 
+                    COALESCE(
+                        JSON_AGG(
+                            JSON_BUILD_OBJECT(
+                                'dayOfWeek', timeslots.day_of_week,
+                                'startTime', timeslots.start_time,
+                                'endTime', timeslots.end_time
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
                     ) AS timeslots, 
+                    fare_details.duration,
+                    fare_details.day_start,
                     alternate_fare_details_id, 
                     fare_details.date_created, 
                     fare_details.date_modified
@@ -110,10 +204,11 @@ export const getFareDetailsById = async (
                     commute_systems ON stations.commute_system_id = commute_systems.id
                 WHERE fare_details.id = $1
                 GROUP BY 
-                    fare_details.id, commute_systems.id;
-            `,
-            [],
-        );
+                    fare_details.id, stations.id, commute_systems.id;
+            `;
+            params = [id];
+        }
+        const { rows } = await client.query(query, params);
 
         const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
@@ -313,7 +408,7 @@ export const updateFareDetail = async (
             return;
         }
 
-        const { rows: currentTimeslots } = await client.query(
+        await client.query(
             `
                 SELECT *
                     FROM timeslots
@@ -322,48 +417,40 @@ export const updateFareDetail = async (
             [id],
         );
 
-        const { toInsert, toDelete, toUpdate } = compareTimeslots(
-            currentTimeslots,
-            timeslots,
-        );
-
         await client.query('BEGIN;');
 
-        toDelete.forEach(async (timeslot) => {
-            await client.query(
-                `
-                    DELETE FROM timeslots
-                        WHERE id = $1
-                `,
-                [timeslot.timeslot_id],
-            );
-        });
+        // Delete all existing timeslots
+        await client.query('DELETE FROM timeslots WHERE fare_details_id = $1', [
+            id,
+        ]);
 
-        toInsert.forEach(async (timeslot) => {
+        // Insert new timeslots
+        timeslots.forEach(async (timeslot: Timeslots) => {
             await client.query(
                 `
-                    INSERT INTO timeslots
-                    (fare_details_id, day_of_week, start_time, end_time)
-                    VALUES ($1, $2, $3, $4)
-                    RETURNING *
-                `,
+            INSERT INTO timeslots
+            (fare_details_id, day_of_week, start_time, end_time)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+        `,
                 [id, timeslot.dayOfWeek, timeslot.startTime, timeslot.endTime],
             );
         });
 
+        // Update fare details
         const { rows: updateFareDetailResults } = await client.query(
             `
-                UPDATE fare_details
-                SET station_id = $1,
-                account_id = $2,
-                name = $3,
-                fare = $4,
-                duration = $5,
-                day_start = $6,
-                alternate_fare_details_id = $7
-                WHERE id = $8
-                RETURNING *
-            `,
+        UPDATE fare_details
+        SET station_id = $1,
+        account_id = $2,
+        name = $3,
+        fare = $4,
+        duration = $5,
+        day_start = $6,
+        alternate_fare_details_id = $7
+        WHERE id = $8
+        RETURNING *
+    `,
             [
                 stationId,
                 accountId,
@@ -375,6 +462,8 @@ export const updateFareDetail = async (
                 id,
             ],
         );
+
+        console.log(updateFareDetailResults);
 
         await client.query('COMMIT;');
 

@@ -1,5 +1,5 @@
 import express, { type Router } from 'express';
-import { param, body } from 'express-validator';
+import { param, body, query } from 'express-validator';
 import {
     getFareDetails,
     createFareDetail,
@@ -11,12 +11,25 @@ import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
-router.get('/', getFareDetails);
+router.get(
+    '/',
+    [
+        query('stationId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Station ID must be a number'),
+    ],
+    getFareDetails,
+);
 
 router.get(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query('stationId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Station ID must be a number'),
         validateRequest,
     ],
     getFareDetailsById,
@@ -27,7 +40,7 @@ router.post(
     [
         body('stationId')
             .isInt({ min: 1 })
-            .withMessage('Commute System ID must be a number'),
+            .withMessage('Station ID must be a number'),
         body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
@@ -70,7 +83,7 @@ router.put(
             .withMessage('Account ID must be a number'),
         body('stationId')
             .isInt({ min: 1 })
-            .withMessage('Commute System ID must be a number'),
+            .withMessage('Station ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('fare').isFloat().withMessage('Fare must be a number'),
         body('timeslots.*.dayOfWeek')
