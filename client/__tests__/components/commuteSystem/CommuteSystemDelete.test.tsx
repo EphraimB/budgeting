@@ -11,6 +11,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/commuteSystem", () => ({
+  deleteCommuteSystem: jest.fn(),
+}));
+
 describe("CommuteSystemDelete Component", () => {
   const mockSetCommuteSystemModes = jest.fn();
 

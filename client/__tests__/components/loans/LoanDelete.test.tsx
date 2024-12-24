@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/loan", () => ({
+  deleteLoan: jest.fn(),
+}));
+
 describe("LoanDelete", () => {
   it("renders the component", () => {
     const loan = {

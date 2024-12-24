@@ -20,6 +20,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/wishlist", () => ({
+  editWishlist: jest.fn(),
+}));
+
 describe("WishlistEdit", () => {
   it("renders the component", async () => {
     const wishlist = {

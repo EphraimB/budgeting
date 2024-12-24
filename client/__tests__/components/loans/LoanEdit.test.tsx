@@ -18,6 +18,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/loan", () => ({
+  editLoan: jest.fn(),
+}));
+
 describe("LoanEdit", () => {
   it("renders the component", async () => {
     const loan = {

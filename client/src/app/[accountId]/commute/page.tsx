@@ -49,8 +49,8 @@ async function getCommuteHistory(accountId: number) {
   }
 }
 
-async function Commute({ params }: { params: { accountId: string } }) {
-  const accountId = parseInt(params.accountId);
+async function Commute({ params }: { params: Promise<{ accountId: string }> }) {
+  const accountId = parseInt((await params).accountId);
 
   const fares: FareDetail[] = await getFares();
   const commuteSchedule: FullCommuteSchedule[] = await getCommuteSchedule();

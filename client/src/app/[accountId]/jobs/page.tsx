@@ -19,8 +19,8 @@ async function getJobs(accountId: number) {
   }
 }
 
-async function Jobs({ params }: { params: { accountId: string } }) {
-  const accountId = parseInt(params.accountId);
+async function Jobs({ params }: { params: Promise<{ accountId: string }> }) {
+  const accountId = parseInt((await params).accountId);
 
   const jobs: Job[] = await getJobs(accountId);
 

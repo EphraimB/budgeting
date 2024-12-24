@@ -28,28 +28,31 @@ async function TransactionsPage({
   params,
   searchParams,
 }: {
-  params: { accountId: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ accountId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   dayjs.extend(customParseFormat);
 
-  const accountId = parseInt(params.accountId);
+  const accountId = parseInt((await params).accountId);
 
-  // If no search params are provided, set to the current date for from date and one month from now for to date and change the URL
+  // Default to the current date and one month from now if no valid searchParams are provided
+  let fromDate = dayjs().format("YYYY-MM-DD"); // Default "fromDate" (today)
+  let toDate = dayjs().add(1, "month").format("YYYY-MM-DD"); // Default "toDate" (one month later)
+
+  // Check if valid 'fromDate' and 'toDate' exist in the searchParams
   if (
-    Object.keys(searchParams).length === 0 ||
-    dayjs(searchParams.fromDate as string, "YYYY-MM-DD", true).isValid() ===
-      false ||
-    dayjs(searchParams.toDate as string, "YYYY-MM-DD", true).isValid() === false
+    (await searchParams).fromDate &&
+    dayjs((await searchParams).fromDate as string, "YYYY-MM-DD", true).isValid()
   ) {
-    searchParams = {
-      fromDate: dayjs().format().split("T")[0],
-      toDate: dayjs().add(1, "month").format().split("T")[0],
-    };
+    fromDate = (await searchParams).fromDate as string; // Use the provided 'fromDate'
   }
 
-  const fromDate = searchParams.fromDate as string;
-  const toDate = searchParams.toDate as string;
+  if (
+    (await searchParams).toDate &&
+    dayjs((await searchParams).toDate as string, "YYYY-MM-DD", true).isValid()
+  ) {
+    toDate = (await searchParams).toDate as string; // Use the provided 'toDate'
+  }
 
   const generatedTransactions: GeneratedTransaction = await getTransactions(
     accountId,

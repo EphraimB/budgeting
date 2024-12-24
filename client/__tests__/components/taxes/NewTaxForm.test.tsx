@@ -13,6 +13,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/tax", () => ({
+  addTax: jest.fn(),
+}));
+
 describe("NewTaxForm", () => {
   test("renders NewTaxForm component", async () => {
     const setShowTaxForm = jest.fn();

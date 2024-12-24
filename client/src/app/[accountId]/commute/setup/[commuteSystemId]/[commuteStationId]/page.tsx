@@ -1,5 +1,5 @@
 import { CommuteStation, CommuteSystem, FareDetail } from "@/app/types/types";
-import { Box, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import FareDetailsCards from "../../../../../../../components/fareDetails/FareDetailsCards";
 import { ArrowDownward } from "@mui/icons-material";
 
@@ -54,15 +54,15 @@ async function getFareDetails(commuteStationId: number) {
 async function CommuteStationDetails({
   params,
 }: {
-  params: {
+  params: Promise<{
     accountId: string;
     commuteSystemId: string;
     commuteStationId: string;
-  };
+  }>;
 }) {
-  const accountId = parseInt(params.accountId);
-  const commuteSystemId = parseInt(params.commuteSystemId);
-  const commuteStationId = parseInt(params.commuteStationId);
+  const accountId = parseInt((await params).accountId);
+  const commuteSystemId = parseInt((await params).commuteSystemId);
+  const commuteStationId = parseInt((await params).commuteStationId);
 
   const commuteSystem: CommuteSystem = await getCommuteSystemsById(
     commuteSystemId

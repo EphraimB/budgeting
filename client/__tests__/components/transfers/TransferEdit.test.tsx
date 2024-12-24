@@ -20,6 +20,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/transfer", () => ({
+  editTransfer: jest.fn(),
+}));
+
 describe("TransferEdit", () => {
   it("renders the component", async () => {
     const transfer: Transfer = {

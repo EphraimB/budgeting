@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/income", () => ({
+  deleteIncome: jest.fn(),
+}));
+
 describe("IncomeDelete", () => {
   it("renders the component", () => {
     const income = {

@@ -50,10 +50,10 @@ async function getPayrollTaxes(jobId: number) {
 async function JobDetails({
   params,
 }: {
-  params: { accountId: string; jobId: string };
+  params: Promise<{ accountId: string; jobId: string }>;
 }) {
-  const accountId = parseInt(params.accountId);
-  const jobId = parseInt(params.jobId);
+  const accountId = parseInt((await params).accountId);
+  const jobId = parseInt((await params).jobId);
 
   const job: Job = await getJob(jobId);
   const payrollDates: PayrollDate[] = await getPayrollDates(jobId);

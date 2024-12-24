@@ -9,6 +9,10 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+jest.mock("../../../services/actions/payrollTax", () => ({
+  editPayrollTax: jest.fn(),
+}));
+
 describe("PayrollTaxesCards", () => {
   it("renders payroll taxes cards with provided payroll taxes", () => {
     const job: Job = {

@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/account", () => ({
+  addAccount: jest.fn(),
+}));
+
 describe("NewAccountForm", () => {
   test("renders NewAccountForm component", () => {
     const setShowNewAccountForm = jest.fn();

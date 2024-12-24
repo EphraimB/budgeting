@@ -2,7 +2,6 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import PayrollTaxEdit from "../../../components/payrollTaxes/PayrollTaxEdit";
 import "@testing-library/jest-dom";
-import userEvent from "@testing-library/user-event";
 import { PayrollTax } from "@/app/types/types";
 
 jest.mock("next/navigation", () => ({
@@ -26,6 +25,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   useSnackbar: () => ({
     showSnackbar: () => {},
   }),
+}));
+
+jest.mock("../../../services/actions/payrollTax", () => ({
+  editPayrollTax: jest.fn(),
 }));
 
 describe("PayrollTaxEdit", () => {

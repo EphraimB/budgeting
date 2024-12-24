@@ -21,17 +21,17 @@ async function getFareDetails(fareDetailId: number) {
 async function FareTimeslotDetails({
   params,
 }: {
-  params: {
+  params: Promise<{
     accountId: string;
     commuteSystemId: string;
     commuteStationId: string;
     fareDetailId: string;
-  };
+  }>;
 }) {
-  const accountId = parseInt(params.accountId);
-  const commuteSystemId = parseInt(params.commuteSystemId);
-  const stationId = parseInt(params.commuteStationId);
-  const fareDetailId = parseInt(params.fareDetailId);
+  const accountId = parseInt((await params).accountId);
+  const commuteSystemId = parseInt((await params).commuteSystemId);
+  const stationId = parseInt((await params).commuteStationId);
+  const fareDetailId = parseInt((await params).fareDetailId);
 
   const fareDetail: FareDetail = await getFareDetails(fareDetailId);
 

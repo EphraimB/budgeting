@@ -14,6 +14,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/payrollDate", () => ({
+  addPayrollDate: jest.fn(),
+}));
+
 describe("PayrollDates", () => {
   const payrollDates: PayrollDate[] = [
     {

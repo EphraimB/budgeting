@@ -3,14 +3,19 @@ import "@testing-library/jest-dom";
 import FareTimeslotsDayView from "../../../components/fareTimeslots/FareTimeslotsDayView";
 import { FareDetail } from "@/app/types/types";
 
+jest.mock("../../../services/actions/fareDetail", () => ({
+  addFareDetail: jest.fn(),
+}));
+
 describe("FareTimeslotsDayView Component", () => {
   const fareDetail: FareDetail = {
     id: 1,
     accountId: 1,
-    commuteSystemId: 1,
     commuteSystemName: "OMNY",
-    stationId: 1,
     name: "Bus System",
+    fromStation: "23 St",
+    toStation: "14 St",
+    tripDuration: 2,
     fare: 2.76,
     timeslots: [],
     alternateFareDetailId: null,

@@ -19,6 +19,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/income", () => ({
+  addIncome: jest.fn(),
+}));
+
 describe("NewIncomeForm", () => {
   it("renders the component", async () => {
     const taxes = [

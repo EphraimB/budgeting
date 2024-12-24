@@ -101,7 +101,14 @@ function GeneratedTicketModal({
     );
 
     setIsDuplicate(isDuplicate);
-  }, [dayOfWeek, startTime, fare.timeslots, isDuplicate]);
+  }, [
+    dayOfWeek,
+    startTime,
+    fare.timeslots,
+    isDuplicate,
+    commuteSchedule,
+    fare.tripDuration,
+  ]);
 
   const data = {
     fareDetailId: fare.id,

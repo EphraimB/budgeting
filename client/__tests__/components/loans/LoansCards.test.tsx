@@ -8,6 +8,10 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+jest.mock("../../../services/actions/loan", () => ({
+  editLoan: jest.fn(),
+}));
+
 describe("LoansCards", () => {
   it("renders loan cards with provided loans", () => {
     const account_id = 1;

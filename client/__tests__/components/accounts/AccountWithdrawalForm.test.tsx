@@ -3,6 +3,10 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AccountWithdrawalForm from "../../../components/accounts/AccountWithdrawalForm";
 
+jest.mock("../../../services/actions/transactionHistory", () => ({
+  deleteTransactionHistory: jest.fn(),
+}));
+
 describe("AccountWithdrawalForm", () => {
   it("renders", () => {
     render(
