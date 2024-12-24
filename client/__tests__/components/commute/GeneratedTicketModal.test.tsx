@@ -14,6 +14,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/commuteSchedule", () => ({
+  addCommuteSchedule: jest.fn(),
+}));
+
 describe("GeneratedTicketModal", () => {
   const fare: FareDetail = {
     id: 1,
