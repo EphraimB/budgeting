@@ -7,6 +7,10 @@ import {
   FullCommuteSchedule,
 } from "@/app/types/types";
 
+jest.mock("../../../services/actions/commuteSchedule", () => ({
+  addCommuteSchedule: jest.fn(),
+}));
+
 // Mock next/navigation hook
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
