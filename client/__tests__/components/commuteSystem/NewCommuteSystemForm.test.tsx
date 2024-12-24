@@ -17,8 +17,8 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
-jest.mock("../../../services/actions/commuteStation", () => ({
-  addCommuteStation: jest.fn(),
+jest.mock("../../../services/actions/commuteSystem", () => ({
+  addCommuteSystem: jest.fn(),
 }));
 
 describe("NewCommuteSystemForm Component", () => {
