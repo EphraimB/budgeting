@@ -240,6 +240,17 @@ export interface CommuteSchedule {
   pass: string;
 }
 
+export interface CommuteHistory {
+  id: number;
+  accountId: number;
+  commuteSystem: string;
+  fare: number;
+  fareType: string;
+  timestamp: string;
+  dateCreated: string;
+  dateModified: string;
+}
+
 export interface GeneratedTransaction {
   accountId: number;
   currentBalance: number;

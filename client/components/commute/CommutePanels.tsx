@@ -1,6 +1,10 @@
 "use client";
 
-import { FareDetail, FullCommuteSchedule } from "@/app/types/types";
+import {
+  CommuteHistory,
+  FareDetail,
+  FullCommuteSchedule,
+} from "@/app/types/types";
 import { Stack, Box, Divider, Typography, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { usePathname, useRouter } from "next/navigation";
@@ -8,13 +12,16 @@ import Grid from "@mui/material/Grid2";
 import GeneratedTickets from "./GeneratedTickets";
 import CommuteSchedule from "../commuteSchedule/CommuteSchedule";
 import { useState } from "react";
+import CommuteHistoryTable from "../commuteHistory/CommuteHistoryTable";
 
 export default function CommutePanels({
   fares,
   commuteSchedule,
+  commuteHistory,
 }: {
   fares: FareDetail[];
   commuteSchedule: FullCommuteSchedule[];
+  commuteHistory: CommuteHistory[];
 }) {
   const [commuteModes, setCommuteModes] = useState<Record<number, string>>({});
 
@@ -124,7 +131,7 @@ export default function CommutePanels({
             justifyContent: "center",
           }}
         >
-          {/* Original panel 3 content */}
+          <CommuteHistoryTable commuteHistory={commuteHistory} />
         </Box>
       </Stack>
     </>
