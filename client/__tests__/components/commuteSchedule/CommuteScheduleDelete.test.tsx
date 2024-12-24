@@ -37,5 +37,8 @@ describe("CommuteScheduleDelete Component", () => {
         'Are you sure you want to delete the commute "NICE Regular"?'
       )
     ).toBeInTheDocument();
+
+    expect(screen.getByText("No")).toBeInTheDocument();
+    expect(screen.getByText("Yes")).toBeInTheDocument();
   });
 });
