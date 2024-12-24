@@ -1,7 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CommutePanels from "../../../components/commute/CommutePanels";
-import { FareDetail, FullCommuteSchedule } from "@/app/types/types";
+import {
+  CommuteHistory,
+  FareDetail,
+  FullCommuteSchedule,
+} from "@/app/types/types";
 
 // Mock next/navigation hook
 jest.mock("next/navigation", () => ({
@@ -91,16 +95,37 @@ describe("CommutePanels Component", () => {
     },
   ];
 
+  const commuteHistory: CommuteHistory[] = [
+    {
+      id: 1,
+      accountId: 1,
+      commuteSystem: "OMNY",
+      fareType: "Regular",
+      fare: 2.9,
+      timestamp: "2024-12-24T15:37:58.134Z",
+      dateCreated: "2020-01-01",
+      dateModified: "2020-01-01",
+    },
+  ];
+
   it("renders the Commute header", () => {
     render(
-      <CommutePanels commuteSchedule={mockCommuteSchedule} fares={fares} />
+      <CommutePanels
+        commuteSchedule={mockCommuteSchedule}
+        fares={fares}
+        commuteHistory={commuteHistory}
+      />
     );
     expect(screen.getByText("Commute")).toBeInTheDocument();
   });
 
   it("renders the Setup button with the correct link", () => {
     render(
-      <CommutePanels commuteSchedule={mockCommuteSchedule} fares={fares} />
+      <CommutePanels
+        commuteSchedule={mockCommuteSchedule}
+        fares={fares}
+        commuteHistory={commuteHistory}
+      />
     );
 
     const setupButton = screen.getByText("Setup");
@@ -109,14 +134,22 @@ describe("CommutePanels Component", () => {
 
   it("renders the Weekly Commute Schedule section", () => {
     render(
-      <CommutePanels commuteSchedule={mockCommuteSchedule} fares={fares} />
+      <CommutePanels
+        commuteSchedule={mockCommuteSchedule}
+        fares={fares}
+        commuteHistory={commuteHistory}
+      />
     );
     expect(screen.getByText("Weekly Commute Schedule")).toBeInTheDocument();
   });
 
   it("displays schedules for the correct days", () => {
     render(
-      <CommutePanels commuteSchedule={mockCommuteSchedule} fares={fares} />
+      <CommutePanels
+        commuteSchedule={mockCommuteSchedule}
+        fares={fares}
+        commuteHistory={commuteHistory}
+      />
     );
 
     // Check for Monday's schedule
@@ -137,7 +170,11 @@ describe("CommutePanels Component", () => {
 
   it("displays all days of the week even if they have no schedule", () => {
     render(
-      <CommutePanels commuteSchedule={mockCommuteSchedule} fares={fares} />
+      <CommutePanels
+        commuteSchedule={mockCommuteSchedule}
+        fares={fares}
+        commuteHistory={commuteHistory}
+      />
     );
     const days = [
       "Sunday",
@@ -155,14 +192,22 @@ describe("CommutePanels Component", () => {
 
   it("displays a message when no schedules exist for a day", () => {
     render(
-      <CommutePanels commuteSchedule={mockCommuteSchedule} fares={fares} />
+      <CommutePanels
+        commuteSchedule={mockCommuteSchedule}
+        fares={fares}
+        commuteHistory={commuteHistory}
+      />
     );
     expect(screen.getByText("Commute")).toBeInTheDocument();
   });
 
   it("matches snapshots for visual consistency", () => {
     const { container } = render(
-      <CommutePanels commuteSchedule={mockCommuteSchedule} fares={fares} />
+      <CommutePanels
+        commuteSchedule={mockCommuteSchedule}
+        fares={fares}
+        commuteHistory={commuteHistory}
+      />
     );
     expect(container).toMatchSnapshot();
   });
