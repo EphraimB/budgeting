@@ -104,7 +104,9 @@ export default function CommutePanels({
         >
           <Grid container spacing={2}>
             <Grid size={{ xs: 12 }}>
-              <Typography variant="h4">Weekly Commute Schedule</Typography>
+              <Typography component="h3" variant="h4">
+                Weekly Commute Schedule
+              </Typography>
             </Grid>
             {daysOfWeek.map((day, index) => (
               <Grid key={index} size={{ xs: 12 }}>
@@ -131,7 +133,12 @@ export default function CommutePanels({
             justifyContent: "center",
           }}
         >
-          <CommuteHistoryTable commuteHistory={commuteHistory} />
+          <Stack direction="column" spacing={2}>
+            <Typography component="h3" variant="h4">
+              Commute history
+            </Typography>
+            <CommuteHistoryTable commuteHistory={commuteHistory} />
+          </Stack>
         </Box>
       </Stack>
     </>
