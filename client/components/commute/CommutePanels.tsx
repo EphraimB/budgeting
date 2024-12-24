@@ -6,7 +6,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { usePathname, useRouter } from "next/navigation";
 import Grid from "@mui/material/Grid2";
 import GeneratedTickets from "./GeneratedTickets";
-import CommuteScheduleView from "../commuteSchedule/CommuteScheduleView";
+import CommuteSchedule from "../commuteSchedule/CommuteSchedule";
+import { useState } from "react";
 
 export default function CommutePanels({
   fares,
@@ -15,6 +16,8 @@ export default function CommutePanels({
   fares: FareDetail[];
   commuteSchedule: FullCommuteSchedule[];
 }) {
+  const [commuteModes, setCommuteModes] = useState<Record<number, string>>({});
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -102,7 +105,11 @@ export default function CommutePanels({
                 {commuteSchedule
                   .filter((schedule) => schedule.dayOfWeek === index)
                   .map((schedule) => (
-                    <CommuteScheduleView schedule={schedule} />
+                    <CommuteSchedule
+                      schedule={schedule}
+                      commuteModes={commuteModes}
+                      setCommuteModes={setCommuteModes}
+                    />
                   ))}
               </Grid>
             ))}

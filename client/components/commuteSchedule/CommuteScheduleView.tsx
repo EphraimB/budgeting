@@ -1,21 +1,33 @@
-import { FullCommuteSchedule } from "@/app/types/types";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { CommuteSchedule } from "@/app/types/types";
+import { Delete } from "@mui/icons-material";
+import { Box, IconButton, Typography } from "@mui/material";
 
-function CommuteScheduleView({ schedule }: { schedule: FullCommuteSchedule }) {
+function CommuteScheduleView({
+  commute,
+  setCommuteModes,
+}: {
+  commute: CommuteSchedule;
+  setCommuteModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
+}) {
+  const handleDelete = () => {
+    setCommuteModes((prevModes: any) => ({
+      ...prevModes,
+      [commute.id]: "delete",
+    }));
+  };
+
   return (
-    <Grid key={schedule.dayOfWeek} size={{ xs: 12 }}>
-      {schedule.commuteSchedules.map((commute) => (
-        <Grid key={commute.id} size={{ xs: 12 }}>
-          <Box sx={{ backgroundColor: "lightgray", p: 1 }}>
-            <Typography variant="body1">
-              {commute.pass} - {commute.startTime} to {commute.endTime} ($
-              {commute.fare.toFixed(2)})
-            </Typography>
-          </Box>
-        </Grid>
-      ))}
-    </Grid>
+    <Box sx={{ backgroundColor: "lightgray", p: 1 }}>
+      <Box sx={{ justifyContent: "right" }}>
+        <IconButton onClick={handleDelete}>
+          <Delete />
+        </IconButton>
+      </Box>
+      <Typography variant="body1">
+        {commute.pass} - {commute.startTime} to {commute.endTime} ($
+        {commute.fare.toFixed(2)})
+      </Typography>
+    </Box>
   );
 }
 

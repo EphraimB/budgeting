@@ -29,3 +29,11 @@ export async function addCommuteSchedule(
 
   return result;
 }
+
+export async function deleteCommuteSchedule(id: number) {
+  await fetch(`http://server:5001/api/expenses/commute/schedule/${id}`, {
+    method: "DELETE",
+  });
+
+  revalidatePath("/[accountId]", "page");
+}

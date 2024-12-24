@@ -1,9 +1,9 @@
 import { FullCommuteSchedule } from "@/app/types/types";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import CommuteScheduleView from "../../../components/commuteSchedule/CommuteScheduleView";
+import CommuteSchedule from "../../../components/commuteSchedule/CommuteSchedule";
 
-describe("CommuteScheduleView Component", () => {
+describe("CommuteSchedule Component", () => {
   const commuteSchedule: FullCommuteSchedule = {
     dayOfWeek: 1,
     commuteSchedules: [
@@ -18,8 +18,17 @@ describe("CommuteScheduleView Component", () => {
     ],
   };
 
-  it("should render the schedule view", () => {
-    render(<CommuteScheduleView schedule={commuteSchedule} />);
+  it("should render the schedule", () => {
+    const setCommuteModes = jest.fn();
+    const commuteModes = {};
+
+    render(
+      <CommuteSchedule
+        schedule={commuteSchedule}
+        commuteModes={commuteModes}
+        setCommuteModes={setCommuteModes}
+      />
+    );
 
     expect(
       screen.getByText("NICE Regular - 09:00 to 09:35 ($2.90)")
