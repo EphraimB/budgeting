@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/job", () => ({
+  addJob: jest.fn(),
+}));
+
 describe("NewJobForm", () => {
   const setShowJobForm = jest.fn();
 
