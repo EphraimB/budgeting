@@ -115,6 +115,7 @@ export default function CommutePanels({
                   .filter((schedule) => schedule.dayOfWeek === index)
                   .map((schedule) => (
                     <CommuteSchedule
+                      key={schedule.dayOfWeek}
                       schedule={schedule}
                       commuteModes={commuteModes}
                       setCommuteModes={setCommuteModes}

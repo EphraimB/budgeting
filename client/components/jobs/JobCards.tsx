@@ -5,7 +5,7 @@ import Card from "@mui/material/Card";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import JobsView from "./JobsView";
 import JobDelete from "./JobDelete";
 import JobEdit from "./JobEdit";
@@ -20,13 +20,13 @@ function JobCards({ jobs, accountId }: { jobs: Job[]; accountId: number }) {
     <>
       <Grid container spacing={2}>
         {showJobForm && (
-          <Grid key="new-job" item>
+          <Grid key="new-job">
             <NewJobForm setShowJobForm={setShowJobForm} accountId={accountId} />
           </Grid>
         )}
 
         {jobs.map((job: Job) => (
-          <Grid key={job.id} item>
+          <Grid key={job.id}>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {jobModes[job.id] === "delete" ? (
                 <JobDelete job={job} setJobModes={setJobModes} />

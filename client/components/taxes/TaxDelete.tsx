@@ -31,11 +31,11 @@ function TaxDelete({
       // Show error message
       showAlert(`Error deleting tax "${tax.title}"`, "error");
     }
-    setTaxModes((prev) => ({ ...prev, [tax.id]: "view" }));
+    setTaxModes(() => ({}));
   };
 
   const handleCancel = () => {
-    setTaxModes((prev) => ({ ...prev, [tax.id]: "view" }));
+    setTaxModes(() => ({}));
   };
 
   return (

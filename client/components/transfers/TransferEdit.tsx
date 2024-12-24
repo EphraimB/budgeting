@@ -26,7 +26,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useAlert, useSnackbar } from "../../context/FeedbackContext";
-import { addTransfer, editTransfer } from "../../services/actions/transfer";
+import { editTransfer } from "../../services/actions/transfer";
 
 dayjs.extend(utc);
 
@@ -248,17 +248,19 @@ function TransferEdit({
               label="Amount"
               variant="standard"
               type="number"
-              inputProps={{
-                step: 0.01,
-              }}
               value={amount ? amount : "0"}
               onChange={(e) => setAmount(e.target.value)}
               error={!!amountError}
               helperText={amountError}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                  inputProps: {
+                    step: 0.01,
+                  },
+                },
               }}
             />
             <br />

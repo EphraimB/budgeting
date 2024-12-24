@@ -129,17 +129,21 @@ function PayrollTaxEdit({
             label="Payroll tax rate"
             variant="standard"
             type="number"
-            inputProps={{
-              step: 0.01,
-            }}
             value={rate ? parseFloat(rate) * 100 : "0"}
             onChange={(e) =>
               setRate((parseFloat(e.target.value) / 100).toString())
             }
             error={!!rateError}
             helperText={rateError}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">%</InputAdornment>,
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="end">%</InputAdornment>
+                ),
+                inputProps: {
+                  step: 0.01,
+                },
+              },
             }}
             fullWidth
           />

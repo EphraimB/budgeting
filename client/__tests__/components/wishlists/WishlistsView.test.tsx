@@ -33,7 +33,7 @@ describe("WishlistView", () => {
     expect(screen.getByText("This is a test wishlist")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "You will be charged $1000 for this item on Thursday October 10, 2024 12:00 AM."
+        "You will be charged $1000.00 for this item on Thursday October 10, 2024 12:00 AM."
       )
     ).toBeInTheDocument();
   });
@@ -67,7 +67,7 @@ it("Renders a wishlist view with a url link provided", () => {
   expect(screen.getByText("iPhone 16 Pro Max 1TB")).toBeInTheDocument();
   expect(
     screen.getByText(
-      "You will be charged $1599 for this item on Sunday September 22, 2024 12:00 AM."
+      "You will be charged $1599.00 for this item on Sunday September 22, 2024 12:00 AM."
     )
   ).toBeInTheDocument();
   expect(screen.getByText("View wishlist item here")).toBeInTheDocument();
