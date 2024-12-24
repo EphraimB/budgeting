@@ -3,6 +3,10 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AccountDepositForm from "../../../components/accounts/AccountDepositForm";
 
+jest.mock("../../../services/actions/transactionHistory", () => ({
+  addTransactionHistory: jest.fn(),
+}));
+
 describe("AccountDepositForm", () => {
   it("renders", () => {
     render(
