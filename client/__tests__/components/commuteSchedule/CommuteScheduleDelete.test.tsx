@@ -33,9 +33,7 @@ describe("CommuteScheduleDelete Component", () => {
     );
 
     expect(
-      screen.getByText(
-        'Are you sure you want to delete the commute "NICE Regular"?'
-      )
+      screen.getByText("Are you sure you want to delete this commute?")
     ).toBeInTheDocument();
 
     expect(screen.getByText("No")).toBeInTheDocument();

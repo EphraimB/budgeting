@@ -41,7 +41,7 @@ function CommuteScheduleDelete({
         </IconButton>
       </Box>
       <Typography variant="body1">
-        Are you sure you want to delete the commute &quot;{commute.pass}&quot;?
+        Are you sure you want to delete this commute?
       </Typography>
       <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
         <Button color="secondary" onClick={handleCancel}>
