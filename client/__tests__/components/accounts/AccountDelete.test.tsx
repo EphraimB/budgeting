@@ -19,6 +19,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/account", () => ({
+  deleteAccount: jest.fn(),
+}));
+
 describe("AccountList", () => {
   it("renders", () => {
     render(

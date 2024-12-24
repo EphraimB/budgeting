@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/wishlist", () => ({
+  deleteWishlist: jest.fn(),
+}));
+
 describe("WishlistDelete", () => {
   it("renders the component", () => {
     const wishlist = {

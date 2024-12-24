@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/payrollTax", () => ({
+  deletePayrollTax: jest.fn(),
+}));
+
 describe("PayrollTaxDelete", () => {
   it("renders the component", () => {
     const payrollTax = {

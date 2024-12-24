@@ -12,6 +12,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/expense", () => ({
+  deleteExpense: jest.fn(),
+}));
+
 describe("ExpenseDelete", () => {
   it("renders the component", () => {
     const expense = {

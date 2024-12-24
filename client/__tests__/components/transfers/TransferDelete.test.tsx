@@ -13,6 +13,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/transfer", () => ({
+  deleteTransfer: jest.fn(),
+}));
+
 describe("TransferDelete", () => {
   it("renders the component", () => {
     const transfer: Transfer = {
