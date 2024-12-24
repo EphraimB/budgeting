@@ -35,8 +35,12 @@ async function getAccounts(accountId: number) {
   }
 }
 
-async function Transfers({ params }: { params: { accountId: string } }) {
-  const accountId = parseInt(params.accountId);
+async function Transfers({
+  params,
+}: {
+  params: Promise<{ accountId: string }>;
+}) {
+  const accountId = parseInt((await params).accountId);
 
   const transfers: Transfer[] = await getTransfers(accountId);
   const accounts: Account[] = await getAccounts(accountId);

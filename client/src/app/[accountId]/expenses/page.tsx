@@ -33,8 +33,12 @@ async function getTaxes() {
   }
 }
 
-async function Expenses({ params }: { params: { accountId: string } }) {
-  const accountId = parseInt(params.accountId);
+async function Expenses({
+  params,
+}: {
+  params: Promise<{ accountId: string }>;
+}) {
+  const accountId = parseInt((await params).accountId);
 
   const expenses: Expense[] = await getExpenses(accountId);
   const taxes: Tax[] = await getTaxes();

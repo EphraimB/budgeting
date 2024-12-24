@@ -19,8 +19,8 @@ async function getLoans(accountId: number) {
   }
 }
 
-async function Loans({ params }: { params: { accountId: string } }) {
-  const accountId = parseInt(params.accountId);
+async function Loans({ params }: { params: Promise<{ accountId: string }> }) {
+  const accountId = parseInt((await params).accountId);
 
   const loans: Loan[] = await getLoans(accountId);
 

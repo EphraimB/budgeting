@@ -33,8 +33,12 @@ async function getTaxes() {
   }
 }
 
-async function Wishlists({ params }: { params: { accountId: string } }) {
-  const accountId = parseInt(params.accountId);
+async function Wishlists({
+  params,
+}: {
+  params: Promise<{ accountId: string }>;
+}) {
+  const accountId = parseInt((await params).accountId);
 
   const wishlists: Wishlist[] = await getWishlists(accountId);
   const taxes: Tax[] = await getTaxes();

@@ -31,8 +31,8 @@ async function getPayrollDates(jobId: number) {
   }
 }
 
-async function JobDates({ params }: { params: { jobId: string } }) {
-  const jobId = parseInt(params.jobId);
+async function JobDates({ params }: { params: Promise<{ jobId: string }> }) {
+  const jobId = parseInt((await params).jobId);
 
   const job: Job = await getJob(jobId);
   const payrollDates: PayrollDate[] = await getPayrollDates(jobId);

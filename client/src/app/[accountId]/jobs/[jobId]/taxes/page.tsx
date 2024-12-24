@@ -31,8 +31,12 @@ async function getPayrollTaxes(jobId: number) {
   }
 }
 
-async function JobPayrollTaxes({ params }: { params: { jobId: string } }) {
-  const jobId = parseInt(params.jobId);
+async function JobPayrollTaxes({
+  params,
+}: {
+  params: Promise<{ jobId: string }>;
+}) {
+  const jobId = parseInt((await params).jobId);
 
   const job: Job = await getJob(jobId);
   const payrollTaxes: PayrollTax[] = await getPayrollTaxes(jobId);

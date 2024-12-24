@@ -9,14 +9,14 @@ export default function CommuteNavTabs({ accountId }: { accountId: number }) {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState(0);
 
-  // Map the last segment of routes to tab indices
-  const routeToTabIndex: { [key: string]: number } = {
-    "": 0, // Home tab
-    setup: 1, // Setup tab
-    history: 2, // History tab
-  };
-
   useEffect(() => {
+    // Map the last segment of routes to tab indices
+    const routeToTabIndex: { [key: string]: number } = {
+      "": 0, // Home tab
+      setup: 1, // Setup tab
+      history: 2, // History tab
+    };
+
     // Match either the "setup" or "history" segment from pathname
     const match = pathname.match(/\/commute\/(setup|history)?/);
     const pathSegment = match ? match[1] || "" : ""; // Extracts "setup", "history", or empty string for root
