@@ -19,6 +19,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/income", () => ({
+  editIncome: jest.fn(),
+}));
+
 describe("IncomeEdit", () => {
   it("renders the component", async () => {
     const income = {
