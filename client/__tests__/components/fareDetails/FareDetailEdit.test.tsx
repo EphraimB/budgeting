@@ -18,6 +18,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/fareDetail", () => ({
+  editFareDetail: jest.fn(),
+}));
+
 describe("FareDetailEdit Component", () => {
   const mockSetFareDetailModes = jest.fn();
 
