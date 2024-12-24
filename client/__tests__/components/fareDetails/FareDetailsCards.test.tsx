@@ -3,6 +3,10 @@ import "@testing-library/jest-dom";
 import FareDetailsCards from "../../../components/fareDetails/FareDetailsCards";
 import { FareDetail } from "@/app/types/types";
 
+jest.mock("../../../services/actions/fareDetail", () => ({
+  editFareDetail: jest.fn(),
+}));
+
 describe("FareDetailsCards Component", () => {
   const fareDetails: FareDetail[] = [
     {

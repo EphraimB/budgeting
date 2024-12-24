@@ -14,6 +14,10 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
+jest.mock("../../../services/actions/payrollDate", () => ({
+  editPayrollDate: jest.fn(),
+}));
+
 describe("PayrollDateCard", () => {
   const payrollDate: PayrollDate = {
     id: 1,
