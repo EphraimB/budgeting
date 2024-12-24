@@ -44,7 +44,7 @@ describe("TransfersView", () => {
     expect(screen.getByText("Test")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "$1000 will be transfered from your account on Friday December 31, 2021 7:00 PM."
+        "$1000.00 will be transfered from your account on Friday December 31, 2021 7:00 PM."
       )
     ).toBeInTheDocument();
   });
@@ -86,7 +86,7 @@ describe("TransfersView", () => {
     expect(screen.getByText("Test")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "$1000 will be transfered from your account on Friday December 31, 2021 7:00 PM until Saturday January 1, 2022 12:00 AM."
+        "$1000.00 will be transfered from your account on Friday December 31, 2021 7:00 PM until Saturday January 1, 2022 12:00 AM."
       )
     ).toBeInTheDocument();
   });
@@ -127,7 +127,7 @@ describe("TransfersView", () => {
     expect(screen.getByText("Test")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "$1000 will be transfered to your account on Friday December 31, 2021 7:00 PM."
+        "$1000.00 will be transfered to your account on Friday December 31, 2021 7:00 PM."
       )
     ).toBeInTheDocument();
   });

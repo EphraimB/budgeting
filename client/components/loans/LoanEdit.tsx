@@ -261,17 +261,19 @@ function LoanEdit({
               label="Plan Amount"
               variant="standard"
               type="number"
-              inputProps={{
-                step: 0.01,
-              }}
               value={planAmount ? planAmount : "0"}
               onChange={(e) => setPlanAmount(e.target.value)}
               error={!!planAmountError}
               helperText={planAmountError}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                  inputProps: {
+                    step: 0.01,
+                  },
+                },
               }}
             />
             <br />
@@ -280,17 +282,19 @@ function LoanEdit({
               label="Amount"
               variant="standard"
               type="number"
-              inputProps={{
-                step: 0.01,
-              }}
               value={amount ? amount : "0"}
               error={!!amountError}
               helperText={amountError}
               onChange={(e) => setAmount(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                  inputProps: {
+                    step: 0.01,
+                  },
+                },
               }}
             />
             <br />
@@ -299,15 +303,19 @@ function LoanEdit({
               label="Subsidized"
               variant="standard"
               type="number"
-              inputProps={{
-                step: 0.01,
-              }}
               value={subsidized ? parseFloat(subsidized) * 100 : "0"}
               onChange={(e) =>
                 setSubsidized((parseFloat(e.target.value) / 100).toString())
               }
-              InputProps={{
-                endAdornment: <InputAdornment position="end">%</InputAdornment>,
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">%</InputAdornment>
+                  ),
+                  inputProps: {
+                    step: 0.01,
+                  },
+                },
               }}
             />
           </>

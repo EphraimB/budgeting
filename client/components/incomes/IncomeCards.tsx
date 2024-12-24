@@ -6,7 +6,7 @@ import { Income, Tax } from "@/app/types/types";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import IncomeView from "./IncomeView";
 import IncomeDelete from "./IncomeDelete";
 import NewIncomeForm from "./NewIncomeForm";
@@ -28,7 +28,7 @@ function IncomeCards({
     <>
       <Grid container spacing={2}>
         {showIncomeForm && (
-          <Grid key="new-income" item>
+          <Grid key="new-income">
             <NewIncomeForm
               accountId={accountId}
               taxes={taxes}
@@ -38,7 +38,7 @@ function IncomeCards({
         )}
 
         {incomes.map((income: Income) => (
-          <Grid key={income.id} item>
+          <Grid key={income.id}>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {incomeModes[income.id] === "delete" ? (
                 <IncomeDelete income={income} setIncomeModes={setIncomeModes} />

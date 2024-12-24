@@ -29,7 +29,7 @@ describe("JobsView", () => {
     expect(screen.getByText("Testing Inc.")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "You get paid $20 per hour, and you work 40 hours per week."
+        "You get paid $20.00 per hour, and you work 40 hours per week."
       )
     ).toBeInTheDocument();
     expect(screen.getByText("Click to view more details about this job."));

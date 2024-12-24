@@ -207,7 +207,7 @@ function DayOfWeekModal({
         >
           {generateHourTicks()}
           {scheduleDayOfWeek.map((timeslot, index) => (
-            <TimeslotBar timeslot={timeslot} index={index} />
+            <TimeslotBar key={index} timeslot={timeslot} index={index} />
           ))}
         </Box>
       </Stack>

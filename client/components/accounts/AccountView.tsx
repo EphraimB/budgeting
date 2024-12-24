@@ -52,7 +52,6 @@ function AccountView({
       <br />
       <Link
         href={`/${account.id}`}
-        as={`/${account.id}`}
         style={{ color: "inherit", textDecoration: "inherit" }}
       >
         <Typography variant="subtitle1" color="text.primary">

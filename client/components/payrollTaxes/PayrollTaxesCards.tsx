@@ -2,7 +2,7 @@
 
 import { Job, PayrollTax } from "@/app/types/types";
 import React, { useState } from "react";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import { Typography } from "@mui/material";
 import NewPayrollTaxForm from "./NewPayrollTaxForm";
 import Fab from "@mui/material/Fab";
@@ -38,7 +38,7 @@ function PayrollTaxesCards({
       </Typography>
       <Grid container spacing={2}>
         {showPayrollTaxesForm && (
-          <Grid key="new-payroll-tax" item>
+          <Grid key="new-payroll-tax">
             <NewPayrollTaxForm
               jobId={job.id}
               setShowPayrollTaxesForm={setShowPayrollTaxesForm}
@@ -46,7 +46,7 @@ function PayrollTaxesCards({
           </Grid>
         )}
         {payrollTaxes.map((payrollTax: PayrollTax) => (
-          <Grid key={payrollTax.id} item>
+          <Grid key={payrollTax.id}>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {payrollTaxModes[payrollTax.id] === "delete" ? (
                 <PayrollTaxDelete

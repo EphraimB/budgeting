@@ -10,7 +10,7 @@ import Box from "@mui/material/Box";
 import ExpenseDelete from "./ExpenseDelete";
 import ExpenseEdit from "./ExpenseEdit";
 import NewExpenseForm from "./NewExpenseForm";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 
 function ExpensesCards({
   accountId,
@@ -28,7 +28,7 @@ function ExpensesCards({
     <>
       <Grid container spacing={2}>
         {showExpenseForm && (
-          <Grid key="new-expense" item>
+          <Grid key="new-expense">
             <NewExpenseForm
               accountId={accountId}
               setShowExpenseForm={setShowExpenseForm}
@@ -38,7 +38,7 @@ function ExpensesCards({
         )}
 
         {expenses.map((expense: Expense) => (
-          <Grid key={expense.id} item>
+          <Grid key={expense.id}>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {expenseModes[expense.id] === "delete" ? (
                 <ExpenseDelete

@@ -6,7 +6,7 @@ import { Tax, Wishlist } from "@/app/types/types";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import WishlistDelete from "./WishlistDelete";
 import WishlistEdit from "./WishlistEdit";
 import NewWishlistForm from "./NewWishlistForm";
@@ -30,7 +30,7 @@ function WishlistsCards({
     <>
       <Grid container spacing={2}>
         {showWishlistForm && (
-          <Grid key="new-wishlist" item>
+          <Grid key="new-wishlist">
             <NewWishlistForm
               accountId={accountId}
               taxes={taxes}
@@ -41,7 +41,7 @@ function WishlistsCards({
         )}
 
         {wishlists.map((wishlist: Wishlist) => (
-          <Grid key={wishlist.id} item>
+          <Grid key={wishlist.id}>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {wishlistModes[wishlist.id] === "delete" ? (
                 <WishlistDelete

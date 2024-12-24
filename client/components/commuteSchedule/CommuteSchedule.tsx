@@ -13,7 +13,7 @@ function CommuteSchedule({
   setCommuteModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
   return (
-    <Grid key={schedule.dayOfWeek} size={{ xs: 12 }}>
+    <Grid size={{ xs: 12 }}>
       {schedule.commuteSchedules.map((commute) => (
         <Grid key={commute.id} size={{ xs: 12 }}>
           {commuteModes[commute.id] === "delete" ? (

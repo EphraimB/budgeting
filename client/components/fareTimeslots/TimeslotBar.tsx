@@ -34,7 +34,6 @@ function TimeslotBar({
 
   return (
     <Tooltip
-      key={index}
       title={
         dayjs(timeslot.startTime, "HH:mm:ss").format("h:mm:ss A") +
         "-" +
