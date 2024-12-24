@@ -64,7 +64,7 @@ function CommuteSystemView({
       >
         <CardContent>
           <Typography variant="body2">
-            There's{" "}
+            There&apos;s{" "}
             {commuteSystem.fareCap
               ? `a fare cap of $${commuteSystem.fareCap.toFixed(2)} per ${
                   commuteSystem.fareCapDuration === 0
