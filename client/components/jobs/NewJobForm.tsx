@@ -20,7 +20,7 @@ function NewJobForm({
   accountId: number;
 }) {
   const [name, setName] = useState("");
-  const [hourlyRate, setHourlyRate] = useState(0);
+  const [hourlyRate, setHourlyRate] = useState("0");
 
   const [nameError, setNameError] = useState("");
   const [hourlyRateError, setHourlyRateError] = useState("");
@@ -31,7 +31,7 @@ function NewJobForm({
   const data = {
     accountId,
     name,
-    hourlyRate,
+    hourlyRate: parseFloat(hourlyRate),
     jobSchedule: [],
   };
 
@@ -127,7 +127,7 @@ function NewJobForm({
           value={hourlyRate}
           error={!!hourlyRateError}
           helperText={hourlyRateError}
-          onChange={(e) => setHourlyRate(parseInt(e.target.value))}
+          onChange={(e) => setHourlyRate(e.target.value)}
           slotProps={{
             input: {
               startAdornment: (
