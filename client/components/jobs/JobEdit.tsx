@@ -23,7 +23,7 @@ function JobEdit({
   accountId: number;
 }) {
   const [name, setName] = useState(job.name);
-  const [hourlyRate, setHourlyRate] = useState(job.hourlyRate);
+  const [hourlyRate, setHourlyRate] = useState(job.hourlyRate.toString());
 
   const [nameError, setNameError] = useState("");
   const [hourlyRateError, setHourlyRateError] = useState("");
@@ -34,7 +34,7 @@ function JobEdit({
   const data = {
     accountId,
     name,
-    hourlyRate,
+    hourlyRate: parseFloat(hourlyRate),
     jobSchedule: job.jobSchedule,
   };
 
@@ -131,7 +131,7 @@ function JobEdit({
           value={hourlyRate}
           error={!!hourlyRateError}
           helperText={hourlyRateError}
-          onChange={(e) => setHourlyRate(parseInt(e.target.value))}
+          onChange={(e) => setHourlyRate(e.target.value)}
           slotProps={{
             input: {
               startAdornment: (
