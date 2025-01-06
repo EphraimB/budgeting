@@ -422,10 +422,12 @@ BEGIN
         ELSE 
             CASE
             WHEN extract('dow' from now()) <= cs.day_of_week THEN
-                now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                -- If today is before or the same as the target day, add the difference to the current date
+                date_trunc('day', now()) + interval '1 day' * (cs.day_of_week - extract('dow' from now())) + cs.start_time
             ELSE
-                now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
-            END
+                -- If today is after the target day, calculate the next occurrence in the following week
+                date_trunc('day', now()) + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now())) + cs.start_time
+        END
         END AS date,
         -fd.fare AS subtotal,
         0 AS tax_rate,
